@@ -1,0 +1,26 @@
+{
+  "name": "feryardiant/fpdf",
+  "type": "library",
+  "description": "Unofficial FPDF library with clean and readable code.",
+  "license": "no usage restriction",
+  "homepage": "http://www.fpdf.org/",
+  "authors": [
+    {
+      "name": "Fery Wardiyanto",
+      "email": "ferywardiyanto@gmail.com"
+    }
+  ],
+  "autoload": {
+    "classmap": [
+      "fpdf.php"
+    ]
+  },
+  "suggest": {
+    "ext-gd": "For Image Parser support",
+    "ext-zlib": "For Compression support"
+  },
+  "require": {
+    "php": ">=5.3.0"
+  },
+  "minimum-stability": "dev"
+}
