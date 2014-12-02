@@ -1,6 +1,6 @@
 # FPDF
 
-Unofficial FPDF library with clean and readable code
+Unofficial FPDF library with clean and readable codes
 
 This is version 1.7 with some changes:
 
