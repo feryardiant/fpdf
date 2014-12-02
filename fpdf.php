@@ -284,6 +284,8 @@ class FPDF
         $this->leftMargin  = $left;
         $this->topMargin   = $top;
         $this->rightMargin = $right ?: $left;
+
+        return $this;
     }
 
     /**
@@ -298,6 +300,8 @@ class FPDF
         if ($this->page > 0 && $this->x < $margin) {
             $this->x = $margin;
         }
+
+        return $this;
     }
 
     /**
@@ -308,6 +312,8 @@ class FPDF
     public function setTopMargin($margin)
     {
         $this->topMargin = $margin;
+
+        return $this;
     }
 
     /**
@@ -318,6 +324,8 @@ class FPDF
     public function setRightMargin($margin)
     {
         $this->rightMargin = $margin;
+
+        return $this;
     }
 
     /**
@@ -331,6 +339,8 @@ class FPDF
         $this->autoPageBreak    = $auto;
         $this->bottomMargin     = $bottomMargin;
         $this->pageBreakTrigger = $this->height - $bottomMargin;
+
+        return $this;
     }
 
     /**
@@ -352,6 +362,8 @@ class FPDF
         } else {
             throw new InvalidArgumentException('Incorrect layout display mode: '.$layout);
         }
+
+        return $this;
     }
 
     /**
@@ -362,6 +374,8 @@ class FPDF
     public function setCompression($compress)
     {
         $this->compress = function_exists('gzcompress') ? $compress : false;
+
+        return $this;
     }
 
     /**
@@ -429,6 +443,8 @@ class FPDF
     protected function _setMeta($key, $value, $isUTF8 = false)
     {
         $this->$key = $isUTF8 ? $this->_UTF8toUTF16($value) : $value;
+
+        return $this;
     }
 
     /**
@@ -440,6 +456,8 @@ class FPDF
     public function aliasNbPages($alias = '{nb}')
     {
         $this->aliasNbPages = $alias;
+
+        return $this;
     }
 
     /**
@@ -471,10 +489,8 @@ class FPDF
         $this->inFooter = true;
         $this->footer();
         $this->inFooter = false;
-
         // Close page
         $this->_endPage();
-
         // Close document
         $this->_endDoc();
     }
@@ -565,6 +581,8 @@ class FPDF
 
         $this->textColor = $tc;
         $this->colorFlag = $cf;
+
+        return $this;
     }
 
     /**
@@ -607,6 +625,8 @@ class FPDF
         if ($this->page > 0) {
             $this->_out($this->drawColor);
         }
+
+        return $this;
     }
 
     /**
@@ -624,6 +644,8 @@ class FPDF
         if ($this->page > 0) {
             $this->_out($this->fillColor);
         }
+
+        return $this;
     }
 
     /**
@@ -637,6 +659,8 @@ class FPDF
     {
         $this->textColor = $this->_setColor('fill', $r, $g, $b);
         $this->colorFlag = ($this->fillColor != $this->textColor);
+
+        return $this;
     }
 
 
@@ -694,6 +718,8 @@ class FPDF
         if ($this->page > 0) {
             $this->_out(sprintf('%.2F w', $width * $this->scalePoint));
         }
+
+        return $this;
     }
 
     /**
@@ -707,7 +733,7 @@ class FPDF
      */
     public function drawLine($x1, $y1, $x2, $y2)
     {
-        $this->_out(sprintf(
+        return $this->_out(sprintf(
             '%.2F %.2F m %.2F %.2F l S',
             $x1 * $this->scalePoint,
             ($this->height - $y1) * $this->scalePoint,
@@ -736,7 +762,7 @@ class FPDF
             $op = 'S';
         }
 
-        $this->_out(sprintf(
+        return $this->_out(sprintf(
             '%.2F %.2F %.2F %.2F re %s',
             $x * $this->scalePoint,
             ($this->height - $y) * $this->scalePoint,
@@ -793,6 +819,8 @@ class FPDF
         }
 
         $this->fonts[$fontkey] = $info;
+
+        return $this;
     }
 
     /**
@@ -860,6 +888,8 @@ class FPDF
         if ($this->page > 0) {
             $this->_out(sprintf('BT /F%d %.2F Tf ET', $this->currentFont['i'], $this->fontSizePt));
         }
+
+        return $this;
     }
 
     /**
@@ -879,6 +909,8 @@ class FPDF
         if ($this->page > 0) {
             $this->_out(sprintf('BT /F%d %.2F Tf ET', $this->currentFont['i'], $this->fontSizePt));
         }
+
+        return $this;
     }
 
     /**
@@ -907,6 +939,8 @@ class FPDF
         $page = $page == -1 ? $this->page : $page;
 
         $this->links[$link] = array($page, $y);
+
+        return $this;
     }
 
     /**
@@ -928,6 +962,8 @@ class FPDF
             $h * $this->scalePoint,
             $link
         );
+
+        return $this;
     }
 
     /**
@@ -945,9 +981,9 @@ class FPDF
             $x * $this->scalePoint,
             ($this->height - $y) * $this->scalePoint,
             $this->_escape($txt)
-            );
+        );
 
-        if ($this->underline && $txt!='') {
+        if ($this->underline && $txt != '') {
             $s .= ' '.$this->_doUnderline($x, $y, $txt);
         }
 
@@ -955,7 +991,7 @@ class FPDF
             $s = 'q '.$this->textColor.' '.$s.' Q';
         }
 
-        $this->_out($s);
+        return $this->_out($s);
     }
 
     /**
@@ -992,7 +1028,7 @@ class FPDF
             $this->acceptPageBreak()
         ) {
             // Automatic page break
-            $x = $this->x;
+            $x  = $this->x;
             $ws = $this->wordSpacing;
 
             if ($ws > 0) {
@@ -1029,7 +1065,7 @@ class FPDF
                 $w * $k,
                 -$h * $k,
                 $op
-                );
+            );
         }
 
         if (is_string($border)) {
@@ -1043,7 +1079,7 @@ class FPDF
                     ($this->height - $y) * $k,
                     $x * $k,
                     ($this->height - ($y + $h)) * $k
-                    );
+                );
             }
 
             if (strpos($border, 'T') !== false) {
@@ -1052,7 +1088,7 @@ class FPDF
                     ($this->height - $y) * $k,
                     ($x + $w) * $k,
                     ($this->height - $y) * $k
-                    );
+                );
             }
 
             if (strpos($border, 'R') !== false) {
@@ -1062,7 +1098,7 @@ class FPDF
                     ($this->height - $y) * $k,
                     ($x + $w) * $k,
                     ($this->height - ($y + $h)) * $k
-                    );
+                );
             }
 
             if (strpos($border, 'B') !== false) {
@@ -1072,7 +1108,7 @@ class FPDF
                     ($this->height - ($y + $h)) * $k,
                     ($x + $w) * $k,
                     ($this->height - ($y + $h)) * $k
-                    );
+                );
             }
         }
 
@@ -1129,8 +1165,11 @@ class FPDF
             if ($ln == 1) {
                 $this->x = $this->leftMargin;
             }
-        } else
+        } else {
             $this->x += $w;
+        }
+
+        return $this;
     }
 
     /**
@@ -1261,6 +1300,8 @@ class FPDF
 
         $this->cell($w, $h, substr($s, $j, $i - $j), $b, 2, $align, $fill);
         $this->x = $this->leftMargin;
+
+        return $this;
     }
 
     /**
@@ -1354,6 +1395,8 @@ class FPDF
         if ($i != $j) {
             $this->cell($l / 1000 * $this->fontSize, $h, substr($s, $j), 0, 0, '', 0, $link);
         }
+
+        return $this;
     }
 
     /**
@@ -1366,6 +1409,8 @@ class FPDF
     {
         $this->x = $this->leftMargin;
         $this->y += $h === null ? $this->lasth : $h;
+
+        return $this;
     }
 
     /**
@@ -1467,6 +1512,8 @@ class FPDF
         if ($link) {
             $this->link($x, $y, $w, $h, $link);
         }
+
+        return $this;
     }
 
     /**
@@ -1487,6 +1534,8 @@ class FPDF
     public function setX($x)
     {
         $this->x = $x >= 0 ? $x : $this->width + $x;
+
+        return $this;
     }
 
     /**
@@ -1508,6 +1557,8 @@ class FPDF
     {
         $this->x = $this->leftMargin;
         $this->y = $y >= 0 ? $y : $this->height + $y;
+
+        return $this;
     }
 
     /**
@@ -1518,8 +1569,7 @@ class FPDF
      */
     public function setXY($x, $y)
     {
-        $this->setY($y);
-        $this->setX($x);
+        return $this->setY($y)->setX($x);
     }
 
     /**
@@ -2071,6 +2121,8 @@ class FPDF
         } else {
             $this->buffer .= $s."\n";
         }
+
+        return $this;
     }
 
     protected function _putPages()
