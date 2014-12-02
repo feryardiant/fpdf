@@ -767,7 +767,8 @@ class FPDF
             $x * $this->scalePoint,
             ($this->height - $y) * $this->scalePoint,
             $w * $this->scalePoint,
-            -$h * $this->scalePoint, $op
+            -$h * $this->scalePoint,
+            $op
         ));
     }
 
@@ -833,7 +834,7 @@ class FPDF
     public function setFont($family, $style = '', $size = 0)
     {
         $family = $family == '' ? $this->fontFamily : strtolower($family);
-        $style = strtoupper($style);
+        $style  = strtoupper($style);
 
         if (strpos($style, 'U') !== false) {
             $this->underline = true;
@@ -851,7 +852,11 @@ class FPDF
         }
 
         // Test if font is already selected
-        if ($this->fontFamily == $family && $this->fontStyle == $style && $this->fontSizePt == $size) {
+        if (
+            $this->fontFamily == $family &&
+            $this->fontStyle == $style &&
+            $this->fontSizePt == $size
+        ) {
             return;
         }
 
