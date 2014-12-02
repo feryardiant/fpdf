@@ -52,7 +52,13 @@ class FPDF
     protected $curOrientation;
 
     // standard page sizes
-    protected $stdPageSizes;
+    protected $stdPageSizes = array(
+        'a3'     => array(841.89, 1190.55),
+        'a4'     => array(595.28,  841.89),
+        'a5'     => array(420.94,  595.28),
+        'letter' => array(   612,     792),
+        'legal'  => array(   612,    1008),
+    );
 
     // default page size
     protected $defPageSize;
@@ -61,13 +67,7 @@ class FPDF
     protected $curPageSize;
 
     // used for pages with non default sizes or orientations
-    protected $pageSizes = array(
-        'a3'     => array(841.89, 1190.55),
-        'a4'     => array(595.28,  841.89),
-        'a5'     => array(420.94,  595.28),
-        'letter' => array(   612,     792),
-        'legal'  => array(   612,    1008),
-    );
+    protected $pageSizes = array();
 
     // dimensions of current page in points
     protected $widthPt, $heightPt;
