@@ -2,7 +2,7 @@
 
 Unofficial FPDF library with clean and readable codes
 
-This is version 1.7 with some changes:
+This is version 1.7.0 with some changes:
 
 * Class constructor is renamed `__construct` instead of `FPDF`
 * `FPDF_VERSION` is now `FPDF::VERSION`

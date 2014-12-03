@@ -1,52 +1,42 @@
 <?php
-/*******************************************************************************
-* Utility to parse TTF font files                                              *
-*                                                                              *
-* Version: 1.0                                                                 *
-* Date:    2011-06-18                                                          *
-* Author:  Olivier PLATHEY                                                     *
-*******************************************************************************/
 
-class TTFParser
-{
-    var $f;
-    var $tables;
-    var $unitsPerEm;
-    var $xMin, $yMin, $xMax, $yMax;
-    var $numberOfHMetrics;
-    var $numGlyphs;
-    var $widths;
-    var $chars;
-    var $postScriptName;
-    var $Embeddable;
-    var $Bold;
-    var $typoAscender;
-    var $typoDescender;
-    var $capHeight;
-    var $italicAngle;
-    var $underlinePosition;
-    var $underlineThickness;
-    var $isFixedPitch;
+namespace Fpdf;
 
-    function Parse($file)
-    {
-        if (!($this->f = fopen($file, 'rb'))) {
-            throw new InvalidArgumentException('Can\'t open file: '.$file);
+class TTFParser {
+    public $f;
+    public $tables = array();
+    public $unitsPerEm;
+    public $xMin, $yMin, $xMax, $yMax;
+    public $numberOfHMetrics;
+    public $numGlyphs;
+    public $widths = array();
+    public $chars = array();
+    public $postScriptName;
+    public $Embeddable;
+    public $Bold;
+    public $typoAscender;
+    public $typoDescender;
+    public $capHeight;
+    public $italicAngle;
+    public $underlinePosition;
+    public $underlineThickness;
+    public $isFixedPitch;
+
+    public function __construct($file) {
+        if (!$this->f = fopen($file, 'rb')) {
+            $this->Error('Can\'t open file: ' . $file);
         }
 
-        $version = $this->Read(4);
-
-        if ($version == 'OTTO') {
-            throw new InvalidArgumentException('OpenType fonts based on PostScript outlines are not supported');
+        if (($version = $this->Read(4)) == 'OTTO') {
+            $this->Error('OpenType fonts based on PostScript outlines are not supported');
         }
 
         if ($version != "\x00\x01\x00\x00") {
-            throw new InvalidArgumentException('Unrecognized file format');
+            $this->Error('Unrecognized file format');
         }
 
         $numTables = $this->ReadUShort();
         $this->Skip(3 * 2); // searchRange, entrySelector, rangeShift
-        $this->tables = array();
 
         for ($i = 0; $i < $numTables; $i++) {
             $tag = $this->Read(4);
@@ -68,13 +58,13 @@ class TTFParser
         fclose($this->f);
     }
 
-    function ParseHead()
-    {
+    protected function ParseHead() {
         $this->Seek('head');
         $this->Skip(3 * 4); // version, fontRevision, checkSumAdjustment
+        $magicNumber = $this->ReadULong();
 
-        if (($magicNumber = $this->ReadULong()) != 0x5F0F3CF5) {
-            throw new InvalidArgumentException('Incorrect magic number');
+        if ($magicNumber != 0x5F0F3CF5) {
+            $this->Error('Incorrect magic number');
         }
 
         $this->Skip(2); // flags
@@ -86,24 +76,20 @@ class TTFParser
         $this->yMax = $this->ReadShort();
     }
 
-    function ParseHhea()
-    {
+    protected function ParseHhea() {
         $this->Seek('hhea');
         $this->Skip(4 + 15 * 2);
         $this->numberOfHMetrics = $this->ReadUShort();
     }
 
-    function ParseMaxp()
-    {
+    protected function ParseMaxp() {
         $this->Seek('maxp');
         $this->Skip(4);
         $this->numGlyphs = $this->ReadUShort();
     }
 
-    function ParseHmtx()
-    {
+    protected function ParseHmtx() {
         $this->Seek('hmtx');
-        $this->widths = array();
 
         for ($i = 0; $i < $this->numberOfHMetrics; $i++) {
             $advanceWidth = $this->ReadUShort();
@@ -112,17 +98,16 @@ class TTFParser
         }
 
         if ($this->numberOfHMetrics < $this->numGlyphs) {
-            $lastWidth    = $this->widths[$this->numberOfHMetrics - 1];
+            $lastWidth = $this->widths[$this->numberOfHMetrics - 1];
             $this->widths = array_pad($this->widths, $this->numGlyphs, $lastWidth);
         }
     }
 
-    function ParseCmap()
-    {
+    protected function ParseCmap() {
         $this->Seek('cmap');
         $this->Skip(2); // version
         $numTables = $this->ReadUShort();
-        $offset31  = 0;
+        $offset31 = 0;
 
         for ($i = 0; $i < $numTables; $i++) {
             $platformID = $this->ReadUShort();
@@ -135,19 +120,14 @@ class TTFParser
         }
 
         if ($offset31 == 0) {
-            throw new InvalidArgumentException('No Unicode encoding found');
+            $this->Error('No Unicode encoding found');
         }
 
-        $startCount    = array();
-        $endCount      = array();
-        $idDelta       = array();
-        $idRangeOffset = array();
-        $this->chars   = array();
-        fseek($this->f, $this->tables['cmap'] + $offset31, SEEK_SET);
-        $format = $this->ReadUShort();
+        $startCount = $endCount = $idDelta = $idRangeOffset = array();
 
-        if ($format != 4) {
-            throw new InvalidArgumentException('Unexpected subtable format: '.$format);
+        fseek($this->f, $this->tables['cmap'] + $offset31, SEEK_SET);
+        if (($format = $this->ReadUShort()) != 4) {
+            $this->Error('Unexpected subtable format: ' . $format);
         }
 
         $this->Skip(2 * 2); // length, language
@@ -159,14 +139,15 @@ class TTFParser
         }
 
         $this->Skip(2); // reservedPad
-
         for ($i = 0; $i < $segCount; $i++) {
             $startCount[$i] = $this->ReadUShort();
-            $idDelta[$i]    = $this->ReadShort();
+        }
+
+        for ($i = 0; $i < $segCount; $i++) {
+            $idDelta[$i] = $this->ReadShort();
         }
 
         $offset = ftell($this->f);
-
         for ($i = 0; $i < $segCount; $i++) {
             $idRangeOffset[$i] = $this->ReadUShort();
         }
@@ -174,10 +155,9 @@ class TTFParser
         for ($i = 0; $i < $segCount; $i++) {
             $c1 = $startCount[$i];
             $c2 = $endCount[$i];
-            $d  = $idDelta[$i];
-            $ro = $idRangeOffset[$i];
+            $d = $idDelta[$i];
 
-            if ($ro > 0) {
+            if (($ro = $idRangeOffset[$i]) > 0) {
                 fseek($this->f, $offset + 2 * $i + $ro, SEEK_SET);
             }
 
@@ -187,9 +167,7 @@ class TTFParser
                 }
 
                 if ($ro > 0) {
-                    $gid = $this->ReadUShort();
-
-                    if ($gid > 0) {
+                    if (($gid = $this->ReadUShort()) > 0) {
                         $gid += $d;
                     }
                 } else {
@@ -207,8 +185,7 @@ class TTFParser
         }
     }
 
-    function ParseName()
-    {
+    protected function ParseName() {
         $this->Seek('name');
         $tableOffset = ftell($this->f);
         $this->postScriptName = '';
@@ -234,22 +211,21 @@ class TTFParser
         }
 
         if ($this->postScriptName == '') {
-            throw new InvalidArgumentException('PostScript name not found');
+            $this->Error('PostScript name not found');
         }
     }
 
-    function ParseOS2()
-    {
+    protected function ParseOS2() {
         $this->Seek('OS/2');
-        $version             = $this->ReadUShort();
+        $version = $this->ReadUShort();
         $this->Skip(3 * 2); // xAvgCharWidth, usWeightClass, usWidthClass
-        $fsType              = $this->ReadUShort();
-        $this->Embeddable    = ($fsType != 2) && ($fsType & 0x200) == 0;
+        $fsType = $this->ReadUShort();
+        $this->Embeddable = ($fsType != 2) && ($fsType & 0x200) == 0;
         $this->Skip(11 * 2 + 10 + 4 * 4 + 4);
-        $fsSelection         = $this->ReadUShort();
-        $this->Bold          = ($fsSelection & 32) != 0;
+        $fsSelection = $this->ReadUShort();
+        $this->Bold = ($fsSelection & 32) != 0;
         $this->Skip(2 * 2); // usFirstCharIndex, usLastCharIndex
-        $this->typoAscender  = $this->ReadShort();
+        $this->typoAscender = $this->ReadShort();
         $this->typoDescender = $this->ReadShort();
 
         if ($version >= 2) {
@@ -260,57 +236,55 @@ class TTFParser
         }
     }
 
-    function ParsePost()
-    {
+    protected function ParsePost() {
         $this->Seek('post');
         $this->Skip(4); // version
-        $this->italicAngle        = $this->ReadShort();
+        $this->italicAngle = $this->ReadShort();
         $this->Skip(2); // Skip decimal part
-        $this->underlinePosition  = $this->ReadShort();
+        $this->underlinePosition = $this->ReadShort();
         $this->underlineThickness = $this->ReadShort();
-        $this->isFixedPitch       = ($this->ReadULong() != 0);
+        $this->isFixedPitch = ($this->ReadULong() != 0);
     }
 
-    function Seek($tag)
-    {
+    protected function Seek($tag) {
         if (!isset($this->tables[$tag])) {
-            throw new InvalidArgumentException('Table not found: '.$tag);
+            $this->Error('Table not found: ' . $tag);
         }
 
         fseek($this->f, $this->tables[$tag], SEEK_SET);
     }
 
-    function Skip($n)
-    {
+    protected function Skip($n) {
         fseek($this->f, $n, SEEK_CUR);
     }
 
-    function Read($n)
-    {
+    protected function Read($n) {
         return fread($this->f, $n);
     }
 
-    function ReadUShort()
-    {
+    protected function ReadUShort() {
         $a = unpack('nn', fread($this->f, 2));
+
         return $a['n'];
     }
 
-    function ReadShort()
-    {
+    protected function ReadShort() {
         $a = unpack('nn', fread($this->f, 2));
-        $v = $a['n'];
-
-        if ($v >= 0x8000) {
+        if (($v = $a['n']) >= 0x8000) {
             $v -= 65536;
         }
 
         return $v;
     }
 
-    function ReadULong()
-    {
+    protected function ReadULong() {
         $a = unpack('NN', fread($this->f, 4));
+
         return $a['N'];
+    }
+
+    // Fatal error
+    protected function Error($msg) {
+        throw new \Exception('<b>TTFParser error:</b> ' . $msg);
     }
 }
