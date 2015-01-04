@@ -1093,7 +1093,6 @@ class Fpdf extends AbstractFpdf {
             $this->close();
         }
 
-        $dest = strtoupper($dest);
         if ($dest == '') {
             if ($name == '') {
                 $name = 'doc.pdf';
@@ -1103,6 +1102,7 @@ class Fpdf extends AbstractFpdf {
             }
         }
 
+        $dest = strtoupper($dest);
         switch ($dest) {
             case 'I':
                 // Send to standard output
@@ -1127,7 +1127,7 @@ class Fpdf extends AbstractFpdf {
                 break;
             case 'F':
                 // Save to local file
-                if (!($f = fopen($name, 'wb'))) {
+                if (!$f = fopen($name, 'wb')) {
                     $this->error('Unable to create output file: ' . $name);
                 }
 
@@ -1705,6 +1705,7 @@ class Fpdf extends AbstractFpdf {
             $this->_putStream($font);
             $this->_out('endobj');
         }
+
         foreach ($this->fonts as $k => $font) {
             // Font objects
             $this->fonts[$k]['n'] = $this->objNum + 1;

@@ -15,18 +15,27 @@ abstract class AbstractFpdf
         $fontpath;
 
     protected function _validateFontpath() {
-        if (defined('FPDF_FONTPATH')) {
+        $_ds = DIRECTORY_SEPARATOR;
+        $_fp = dirname(__FILE__) . $_ds . self::FONT_PATH;
+
+        if ($path = getenv('FPDF_FONTPATH')) {
+            $fontpath = $path;
+        } elseif (defined('FPDF_FONTPATH')) {
             $fontpath = FPDF_FONTPATH;
-        } elseif (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FONT_PATH)) {
-            $fontpath = dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FONT_PATH;
+        } elseif (is_dir($_fp)) {
+            $fontpath = $_fp;
         } else {
             $fontpath = '';
         }
 
-        if ($fontpath != '') {
-            $fontpath = str_replace('/', DIRECTORY_SEPARATOR, $fontpath);
-            $this->fontpath = rtrim($fontpath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        if (is_dir($fontpath)) {
+            $fontpath = str_replace('/', $_ds, $fontpath);
+            $fontpath = rtrim($fontpath, $_ds) . $_ds;
+        } else {
+            $this->error('Invalid font path');
         }
+
+        $this->fontpath = $fontpath;
     }
 
     // Fatal error
