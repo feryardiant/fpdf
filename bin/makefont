@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+if (PHP_SAPI != 'cli') {
+    die("This script can only be run in CLI.\n");
+}
+
+// Command-line interface
+if ($argc == 1) {
+    die("Usage: php makefont.php fontfile [enc] [embed]\n");
+}
+
+$fontfile = $argv[1];
+$enc      = $argc >= 3 ? $argv[2] : 'cp1252';
+$embed    = $argc >= 4 ? ($argv[3] == 'true' || $argv[3] == '1') : true;
+
+$files = array(
+  __DIR__ . '/../vendor/autoload.php',
+  __DIR__ . '/../../../autoload.php'
+);
+
+foreach ($files as $file) {
+    if (file_exists($file)) {
+        require $file;
+        break;
+    }
+}
+
+try {
+    if ($msg = Fpdf\MakeFont::make($fontfile, $enc, $embed)) {
+        die($msg);
+    }
+} catch (Exception $e) {
+    die($e->getMessage());
+}

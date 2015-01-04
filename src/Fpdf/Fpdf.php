@@ -2,13 +2,9 @@
 
 namespace Fpdf;
 
-class Fpdf {
+class Fpdf extends AbstractFpdf {
     const
-        VERSION    = '1.7.0',
-        DRAW_COLOR = '0 G',
-        FILL_COLOR = '0 g',
-        TEXT_COLOR = '0 g',
-        FONT_PATH  = '../fonts';
+        VERSION = '1.7.0';
 
     protected
         // current page number
@@ -50,8 +46,6 @@ class Fpdf {
         $lasth = 0,
         // line width in user unit
         $LineWidth,
-        // path containing fonts
-        $fontpath,
         // array of core font names
         $CoreFonts = array(
             'courier',
@@ -129,17 +123,7 @@ class Fpdf {
         }
 
         // Font path
-        if (defined('FPDF_FONTPATH')) {
-            $this->fontpath = FPDF_FONTPATH;
-        } elseif (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FONT_PATH)) {
-            $this->fontpath = dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FONT_PATH;
-        } else {
-            $this->fontpath = '';
-        }
-
-        if ($this->fontpath != '') {
-            $this->fontpath = rtrim($this->fontpath, DIRECTORY_SEPARATOR);
-        }
+        $this->_validateFontpath();
 
         // Scale factor
         if ($unit == 'pt') {
@@ -569,8 +553,6 @@ class Fpdf {
 
         $this->FontSizePt = $size;
         $this->FontSize = $size / $this->k;
-
-        if ($this->page > 0) {
             $this->_out(sprintf('BT /F%d %.2F Tf ET', $this->CurrentFont['i'], $this->FontSizePt));
         }
     }
@@ -658,7 +640,6 @@ class Fpdf {
         }
 
         $s = '';
-
         if ($fill || $border == 1) {
             if ($fill) {
                 $op = ($border == 1) ? 'B' : 'f';
@@ -981,7 +962,6 @@ class Fpdf {
     // Line feed; default value is last cell height
     public function Ln($h = null) {
         $this->x = $this->lMargin;
-
         if ($h === null) {
             $this->y += $this->lasth;
         } else {
@@ -1153,11 +1133,6 @@ class Fpdf {
                 $this->Error('Incorrect output destination: ' . $dest);
         }
         return '';
-    }
-
-    // Fatal error
-    public function Error($msg) {
-        throw new \Exception('<b>FPDF error:</b> ' . $msg);
     }
 
     // Creator of document

@@ -2,7 +2,7 @@
 return array(
 	'type' => 'TrueType',
 	'name' => 'Arial-ItalicMT',
-	'desc' => array('Ascent' => 728, 'Descent' => -208, 'CapHeight' => 728, 'Flags' => 96, 'FontBBox' => '[-517 -325 1082 1025]', 'ItalicAngle' =>-12, 'StemV' => 70, 'MissingWidth' => 750),
+	'desc' => array('Ascent' => 728, 'Descent' => -208, 'CapHeight' => 728, 'Flags' => 96, 'FontBBox' => '[-517 -325 1082 1025]', 'ItalicAngle' => -12, 'StemV' => 70, 'MissingWidth' => 750),
 	'up'   => -106,
 	'ut'   => 73,
 	'cw'   => array(
@@ -20,6 +20,7 @@ return array(
 		chr(242) => 556, chr(243) => 556, chr(244) => 556, chr(245) => 556, chr(246) => 556, chr(247) => 549, chr(248) => 611, chr(249) => 556, chr(250) => 556, chr(251) => 556, chr(252) => 556, chr(253) => 500, chr(254) => 556, chr(255) => 500
 	),
 	'enc'  => 'cp1252',
+	'diff' => '32 /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash /zero /one /two /three /four /five /six /seven /eight /nine /colon /semicolon /less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K /L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar /braceright /asciitilde /.notdef /Euro /.notdef /quotesinglbase /florin /quotedblbase /ellipsis /dagger /daggerdbl /circumflex /perthousand /Scaron /guilsinglleft /OE /.notdef /Zcaron /.notdef /.notdef /quoteleft /quoteright /quotedblleft /quotedblright /bullet /endash /emdash /tilde /trademark /scaron /guilsinglright /oe /.notdef /zcaron /Ydieresis /space /exclamdown /cent /sterling /currency /yen /brokenbar /section /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron /degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /periodcentered /cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls /agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla /egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide /oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis',
 	'file' => 'ariali.z',
 	'originalsize' => 206132,
 );

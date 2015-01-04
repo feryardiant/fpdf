@@ -2,7 +2,7 @@
 
 namespace Fpdf;
 
-class TTFParser {
+class TTFParser extends AbstractFpdf {
     public $f;
     public $tables = array();
     public $unitsPerEm;
@@ -155,8 +155,7 @@ class TTFParser {
         for ($i = 0; $i < $segCount; $i++) {
             $c1 = $startCount[$i];
             $c2 = $endCount[$i];
-            $d = $idDelta[$i];
-
+            $d  = $idDelta[$i];
             if (($ro = $idRangeOffset[$i]) > 0) {
                 fseek($this->f, $offset + 2 * $i + $ro, SEEK_SET);
             }
@@ -281,10 +280,5 @@ class TTFParser {
         $a = unpack('NN', fread($this->f, 4));
 
         return $a['N'];
-    }
-
-    // Fatal error
-    protected function Error($msg) {
-        throw new \Exception('<b>TTFParser error:</b> ' . $msg);
     }
 }
