@@ -4,7 +4,7 @@ namespace Fpdf;
 
 class Fpdf extends AbstractFpdf {
     const
-        VERSION = '1.7.0';
+        VERSION = '1.7.1';
 
     protected
         // current page number
