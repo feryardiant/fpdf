@@ -40,11 +40,9 @@ class FpdfTest extends \PHPUnit_Framework_TestCase {
     }
 
     function testPdfFileUsingCoreFont() {
-        if (file_exists($filepath = $this->samplePath . 'test.pdf')) {
-            unlink($filepath);
-        }
-
+        $filepath = $this->samplePath . 'test.pdf';
         $pdf = new Fpdf();
+
         $pdf->addPage();
         $pdf->cell(40, 10, 'Hello World!');
         $pdf->output($filepath, 'F');
@@ -52,15 +50,17 @@ class FpdfTest extends \PHPUnit_Framework_TestCase {
         // 4eb42801d40fd3dc4ceeb0737e237298
         $this->assertSame(1, $pdf->pageNo());
         $this->assertTrue(file_exists($filepath), $filepath);
+
+        if (file_exists($filepath)) {
+            unlink($filepath);
+        }
     }
 
     function testPdfFileUsingSampleFont() {
-        if (file_exists($filepath = $this->samplePath . 'test.pdf')) {
-            unlink($filepath);
-        }
-
         defined('FPDF_FONTPATH') || define('FPDF_FONTPATH', $fontpath);
+        $filepath = $this->samplePath . 'test.pdf';
         $pdf = new Fpdf();
+
         $pdf->addFont($this->sampleFont, '', $this->sampleFont . '.php');
         $pdf->addPage();
         $pdf->setFont($this->sampleFont);
@@ -70,5 +70,9 @@ class FpdfTest extends \PHPUnit_Framework_TestCase {
         // 4eb42801d40fd3dc4ceeb0737e237298
         $this->assertSame(1, $pdf->pageNo());
         $this->assertTrue(file_exists($filepath), $filepath);
+
+        if (file_exists($filepath)) {
+            unlink($filepath);
+        }
     }
 }
