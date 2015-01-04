@@ -36,6 +36,6 @@ abstract class AbstractFpdf
             $heading = "<b>{$heading}</b><br>";
         }
 
-        throw new \Exception($heading . PHP_EOL . $message);
+        throw new \RuntimeException($heading . PHP_EOL . $message);
     }
 }

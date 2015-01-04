@@ -30,6 +30,6 @@ try {
     if ($msg = Fpdf\MakeFont::make($fontfile, $enc, $embed)) {
         die($msg);
     }
-} catch (Exception $e) {
+} catch (RuntimeException $e) {
     die($e->getMessage());
 }

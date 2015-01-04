@@ -553,6 +553,8 @@ class Fpdf extends AbstractFpdf {
 
         $this->FontSizePt = $size;
         $this->FontSize = $size / $this->k;
+
+        if ($this->page > 0) {
             $this->_out(sprintf('BT /F%d %.2F Tf ET', $this->CurrentFont['i'], $this->FontSizePt));
         }
     }
@@ -580,7 +582,13 @@ class Fpdf extends AbstractFpdf {
 
     // Put a link on the page
     public function Link($x, $y, $w, $h, $link) {
-        $this->PageLinks[$this->page][] = array($x * $this->k, $this->hPt - $y * $this->k, $w * $this->k, $h * $this->k, $link);
+        $this->PageLinks[$this->page][] = array(
+            $x * $this->k,
+            $this->hPt - $y * $this->k,
+            $w * $this->k,
+            $h * $this->k,
+            $link
+        );
     }
 
     // Output a string
@@ -1223,14 +1231,12 @@ class Fpdf extends AbstractFpdf {
 
     // Load a font definition file from the font directory
     protected function _loadfont($font) {
-        include $this->fontpath . $font;
-        $a = get_defined_vars();
-
-        if (!isset($a['name'])) {
+        $font = require $this->fontpath . $font;
+        if (!isset($font['name'])) {
             $this->Error('Could not include font definition file');
         }
 
-        return $a;
+        return $font;
     }
 
     // Escape special characters in strings
@@ -1255,9 +1261,7 @@ class Fpdf extends AbstractFpdf {
         $i = 0;
 
         while ($i < $nb) {
-            $c1 = ord($s[$i++]);
-
-            if ($c1 >= 224) {
+            if (($c1 = ord($s[$i++])) >= 224) {
                 // 3-byte character
                 $c2 = ord($s[$i++]);
                 $c3 = ord($s[$i++]);
