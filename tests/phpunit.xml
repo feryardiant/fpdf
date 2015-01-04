@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<phpunit
+    bootstrap="../vendor/autoload.php"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
+    stopOnIncomplete="false"
+    stopOnSkipped="false"
+    verbose="valse">
+    <testsuites>
+        <testsuite name="Fpdf Test Suite">
+            <directory surfix="Test.php">.</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

@@ -4,10 +4,12 @@ Unofficial FPDF library with clean and readable codes
 
 This is version 1.7.0 with some changes:
 
-* Class constructor is renamed `__construct` instead of `FPDF`
-* `FPDF_VERSION` is now `FPDF::VERSION`
-* All method is changed to `camelCase` with same name.
-* on error a RuntimeException is thrown instead on lib dramatically dying
+* [x] The library is namespaced in `Fpdf`
+* [x] directory structure follow the PSR-0 standard with `src/` as root
+* [x] Class constructor is renamed `__construct` instead of `FPDF`
+* [x] `Fpdf_VERSION` is now `Fpdf::VERSION`
+* [x] on error a RuntimeException is thrown instead on lib dramatically dying
+* [ ] All method is changed to `camelCase` with same name.
 
 ## Installing with composer
 
