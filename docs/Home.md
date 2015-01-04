@@ -11,15 +11,6 @@ Unofficial FPDF library with PSR-0 compliant, clean and readable code
 * **Original Author:** [Olivier PLATHEY](http://fpdf.org/)
 * **FPDF Version:** 1.7
 
-## License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software to use, copy, modify, distribute, sublicense, and/or sell
-copies of the software, and to permit persons to whom the software is furnished
-to do so.
-
-**THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED**.
-
 ## Installation
 
 The package exists in the packagist repository as `feryardiant/fpdf`.
@@ -32,6 +23,15 @@ require 'vendor/autoload.php';
 $fpdf = new Fpdf\Fpdf();
 ```
 
+## License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software to use, copy, modify, distribute, sublicense, and/or sell
+copies of the software, and to permit persons to whom the software is furnished
+to do so.
+
+**THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED**.
+
 ## Classes
 
 ### [Fpdf\AbstractFpdf](abstractfpdf)
@@ -41,51 +41,83 @@ $fpdf = new Fpdf\Fpdf();
 
 ### [Fpdf\Fpdf](fpdf)
 
-* [`Fpdf\Fpdf::__construct`](fpdf-constructor)
-* [`Fpdf\Fpdf::acceptPageBreak`](fpdf-acceptpagebreak)
-* [`Fpdf\Fpdf::addFont`](fpdf-addfont)
-* [`Fpdf\Fpdf::addLink`](fpdf-addlink)
-* [`Fpdf\Fpdf::addPage`](fpdf-addpage)
-* [`Fpdf\Fpdf::aliasNbPages`](fpdf-aliasnbpages)
-* [`Fpdf\Fpdf::cell`](fpdf-cell)
-* [`Fpdf\Fpdf::close`](fpdf-close)
-* [`Fpdf\Fpdf::footer`](fpdf-footer)
-* [`Fpdf\Fpdf::getStringWidth`](fpdf-getstringwidth)
-* [`Fpdf\Fpdf::getX`](fpdf-getx)
-* [`Fpdf\Fpdf::getY`](fpdf-gety)
-* [`Fpdf\Fpdf::header`](fpdf-header)
-* [`Fpdf\Fpdf::image`](fpdf-image)
-* [`Fpdf\Fpdf::line`](fpdf-line)
-* [`Fpdf\Fpdf::link`](fpdf-link)
-* [`Fpdf\Fpdf::ln`](fpdf-ln)
-* [`Fpdf\Fpdf::multiCell`](fpdf-multicell)
-* [`Fpdf\Fpdf::output`](fpdf-output)
-* [`Fpdf\Fpdf::pageNo`](fpdf-pageno)
-* [`Fpdf\Fpdf::rect`](fpdf-rect)
-* [`Fpdf\Fpdf::setAuthor`](fpdf-setauthor)
+* [`Fpdf\Fpdf::__construct`](fpdf-__construct)
+* [`Fpdf\Fpdf::setMargins`](fpdf-setmargins)
+* [`Fpdf\Fpdf::setLeftMargin`](fpdf-setleftmargin)
+* [`Fpdf\Fpdf::setTopMargin`](fpdf-settopmargin)
+* [`Fpdf\Fpdf::setRightMargin`](fpdf-setrightmargin)
 * [`Fpdf\Fpdf::setAutoPageBreak`](fpdf-setautopagebreak)
-* [`Fpdf\Fpdf::setCompression`](fpdf-setcompression)
-* [`Fpdf\Fpdf::setCreator`](fpdf-setcreator)
 * [`Fpdf\Fpdf::setDisplayMode`](fpdf-setdisplaymode)
+* [`Fpdf\Fpdf::setCompression`](fpdf-setcompression)
+* [`Fpdf\Fpdf::setTitle`](fpdf-settitle)
+* [`Fpdf\Fpdf::setSubject`](fpdf-setsubject)
+* [`Fpdf\Fpdf::setAuthor`](fpdf-setauthor)
+* [`Fpdf\Fpdf::setKeywords`](fpdf-setkeywords)
+* [`Fpdf\Fpdf::setCreator`](fpdf-setcreator)
+* [`Fpdf\Fpdf::sliasNbPages`](fpdf-sliasnbpages)
+* [`Fpdf\Fpdf::open`](fpdf-open)
+* [`Fpdf\Fpdf::close`](fpdf-close)
+* [`Fpdf\Fpdf::addPage`](fpdf-addpage)
+* [`Fpdf\Fpdf::header`](fpdf-header)
+* [`Fpdf\Fpdf::footer`](fpdf-footer)
+* [`Fpdf\Fpdf::pageNo`](fpdf-pageno)
 * [`Fpdf\Fpdf::setDrawColor`](fpdf-setdrawcolor)
 * [`Fpdf\Fpdf::setFillColor`](fpdf-setfillcolor)
+* [`Fpdf\Fpdf::setTextColor`](fpdf-settextcolor)
+* [`Fpdf\Fpdf::getStringWidth`](fpdf-getstringwidth)
+* [`Fpdf\Fpdf::setLineWidth`](fpdf-setlinewidth)
+* [`Fpdf\Fpdf::line`](fpdf-line)
+* [`Fpdf\Fpdf::rect`](fpdf-rect)
+* [`Fpdf\Fpdf::addFont`](fpdf-addfont)
 * [`Fpdf\Fpdf::setFont`](fpdf-setfont)
 * [`Fpdf\Fpdf::setFontSize`](fpdf-setfontsize)
-* [`Fpdf\Fpdf::setKeywords`](fpdf-setkeywords)
-* [`Fpdf\Fpdf::setLeftMargin`](fpdf-setleftmargin)
-* [`Fpdf\Fpdf::setLineWidth`](fpdf-setlinewidth)
+* [`Fpdf\Fpdf::addLink`](fpdf-addlink)
 * [`Fpdf\Fpdf::setLink`](fpdf-setlink)
-* [`Fpdf\Fpdf::setMargins`](fpdf-setmargins)
-* [`Fpdf\Fpdf::setRightMargin`](fpdf-setrightmargin)
-* [`Fpdf\Fpdf::setSubject`](fpdf-setsubject)
-* [`Fpdf\Fpdf::setTextColor`](fpdf-settextcolor)
-* [`Fpdf\Fpdf::setTitle`](fpdf-settitle)
-* [`Fpdf\Fpdf::setTopMargin`](fpdf-settopmargin)
-* [`Fpdf\Fpdf::setX`](fpdf-setx)
-* [`Fpdf\Fpdf::setXY`](fpdf-setxy)
-* [`Fpdf\Fpdf::setY`](fpdf-sety)
+* [`Fpdf\Fpdf::link`](fpdf-link)
 * [`Fpdf\Fpdf::text`](fpdf-text)
+* [`Fpdf\Fpdf::acceptPageBreak`](fpdf-acceptpagebreak)
+* [`Fpdf\Fpdf::cell`](fpdf-cell)
+* [`Fpdf\Fpdf::multiCell`](fpdf-multicell)
 * [`Fpdf\Fpdf::write`](fpdf-write)
+* [`Fpdf\Fpdf::ln`](fpdf-ln)
+* [`Fpdf\Fpdf::image`](fpdf-image)
+* [`Fpdf\Fpdf::getX`](fpdf-getx)
+* [`Fpdf\Fpdf::setX`](fpdf-setx)
+* [`Fpdf\Fpdf::getY`](fpdf-gety)
+* [`Fpdf\Fpdf::setY`](fpdf-sety)
+* [`Fpdf\Fpdf::setXY`](fpdf-setxy)
+* [`Fpdf\Fpdf::output`](fpdf-output)
+* [`Fpdf\Fpdf::_setMeta`](fpdf-_setmeta)
+* [`Fpdf\Fpdf::_checkOutput`](fpdf-_checkoutput)
+* [`Fpdf\Fpdf::_getPageSize`](fpdf-_getpagesize)
+* [`Fpdf\Fpdf::_beginPage`](fpdf-_beginpage)
+* [`Fpdf\Fpdf::_endPage`](fpdf-_endpage)
+* [`Fpdf\Fpdf::_loadFont`](fpdf-_loadfont)
+* [`Fpdf\Fpdf::_escape`](fpdf-_escape)
+* [`Fpdf\Fpdf::_textString`](fpdf-_textstring)
+* [`Fpdf\Fpdf::_toUTF16`](fpdf-_toutf16)
+* [`Fpdf\Fpdf::_doUnderline`](fpdf-_dounderline)
+* [`Fpdf\Fpdf::_parseJpg`](fpdf-_parsejpg)
+* [`Fpdf\Fpdf::_parsePng`](fpdf-_parsepng)
+* [`Fpdf\Fpdf::_parsePngStream`](fpdf-_parsepngstream)
+* [`Fpdf\Fpdf::_readStream`](fpdf-_readstream)
+* [`Fpdf\Fpdf::_readInt`](fpdf-_readint)
+* [`Fpdf\Fpdf::_parseGif`](fpdf-_parsegif)
+* [`Fpdf\Fpdf::_newObj`](fpdf-_newobj)
+* [`Fpdf\Fpdf::_putStream`](fpdf-_putstream)
+* [`Fpdf\Fpdf::_out`](fpdf-_out)
+* [`Fpdf\Fpdf::_putPages`](fpdf-_putpages)
+* [`Fpdf\Fpdf::_putfonts`](fpdf-_putfonts)
+* [`Fpdf\Fpdf::_putImages`](fpdf-_putimages)
+* [`Fpdf\Fpdf::_putImage`](fpdf-_putimage)
+* [`Fpdf\Fpdf::_putXObjectDict`](fpdf-_putxobjectdict)
+* [`Fpdf\Fpdf::_putResourceDict`](fpdf-_putresourcedict)
+* [`Fpdf\Fpdf::_putResources`](fpdf-_putresources)
+* [`Fpdf\Fpdf::_putInfo`](fpdf-_putinfo)
+* [`Fpdf\Fpdf::_putCatalog`](fpdf-_putcatalog)
+* [`Fpdf\Fpdf::_putHeader`](fpdf-_putheader)
+* [`Fpdf\Fpdf::_putTrailer`](fpdf-_puttrailer)
+* [`Fpdf\Fpdf::_endDoc`](fpdf-_enddoc)
 
 ### [Fpdf\MakeFont](makefont)
 
