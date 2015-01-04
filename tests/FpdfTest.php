@@ -10,6 +10,27 @@ class FpdfTest extends \PHPUnit_Framework_TestCase {
         $this->samplePath = dirname(__FILE__) . '/samples/';
     }
 
+    function testMakeFont() {
+        $fontpath = $this->samplePath;
+        $basename = $fontpath . $this->sampleFont;
+        $fontfile = $basename . '.ttf';
+
+        unlink($basename . '.php');
+        unlink($basename . '.z');
+
+        defined('FPDF_FONTPATH') || define('FPDF_FONTPATH', $fontpath);
+        $msg = MakeFont::make($fontfile);
+
+        $this->assertTrue(file_exists($fontfile));
+        $this->assertTrue(file_exists($basename . '.php'));
+
+        if (function_exists('gzcompress')) {
+            $this->assertTrue(file_exists($basename . '.z'));
+        } else {
+            $this->assertFalse(file_exists($basename . '.z'));
+        }
+    }
+
     function testPagesAdded() {
         $pdf = new Fpdf();
         $pdf->addPage();
@@ -38,6 +59,7 @@ class FpdfTest extends \PHPUnit_Framework_TestCase {
             unlink($filepath);
         }
 
+        defined('FPDF_FONTPATH') || define('FPDF_FONTPATH', $fontpath);
         $pdf = new Fpdf();
         $pdf->addFont($this->sampleFont, '', $this->sampleFont . '.php');
         $pdf->addPage();
@@ -48,26 +70,5 @@ class FpdfTest extends \PHPUnit_Framework_TestCase {
         // 4eb42801d40fd3dc4ceeb0737e237298
         $this->assertSame(1, $pdf->pageNo());
         $this->assertTrue(file_exists($filepath), $filepath);
-    }
-
-    function testMakeFont() {
-        $fontpath = $this->samplePath;
-        $basename = $fontpath . $this->sampleFont;
-        $fontfile = $basename . '.ttf';
-
-        unlink($basename . '.php');
-        unlink($basename . '.z');
-
-        define('FPDF_FONTPATH', $fontpath);
-        $msg = MakeFont::make($fontfile);
-
-        $this->assertTrue(file_exists($fontfile));
-        $this->assertTrue(file_exists($basename . '.php'));
-
-        if (function_exists('gzcompress')) {
-            $this->assertTrue(file_exists($basename . '.z'));
-        } else {
-            $this->assertFalse(file_exists($basename . '.z'));
-        }
     }
 }
