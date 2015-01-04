@@ -24,76 +24,76 @@ class TTFParser extends AbstractFpdf {
 
     public function __construct($file) {
         if (!$this->f = fopen($file, 'rb')) {
-            $this->Error('Can\'t open file: ' . $file);
+            $this->error('Can\'t open file: ' . $file);
         }
 
-        if (($version = $this->Read(4)) == 'OTTO') {
-            $this->Error('OpenType fonts based on PostScript outlines are not supported');
+        if (($version = $this->read(4)) == 'OTTO') {
+            $this->error('OpenType fonts based on PostScript outlines are not supported');
         }
 
         if ($version != "\x00\x01\x00\x00") {
-            $this->Error('Unrecognized file format');
+            $this->error('Unrecognized file format');
         }
 
-        $numTables = $this->ReadUShort();
-        $this->Skip(3 * 2); // searchRange, entrySelector, rangeShift
+        $numTables = $this->readUShort();
+        $this->skip(3 * 2); // searchRange, entrySelector, rangeShift
 
         for ($i = 0; $i < $numTables; $i++) {
-            $tag = $this->Read(4);
-            $this->Skip(4); // checkSum
-            $offset = $this->ReadULong();
-            $this->Skip(4); // length
+            $tag = $this->read(4);
+            $this->skip(4); // checkSum
+            $offset = $this->readULong();
+            $this->skip(4); // length
             $this->tables[$tag] = $offset;
         }
 
-        $this->ParseHead();
-        $this->ParseHhea();
-        $this->ParseMaxp();
-        $this->ParseHmtx();
-        $this->ParseCmap();
-        $this->ParseName();
-        $this->ParseOS2();
-        $this->ParsePost();
+        $this->head();
+        $this->hhea();
+        $this->maxp();
+        $this->hmtx();
+        $this->cmap();
+        $this->name();
+        $this->os2();
+        $this->post();
 
         fclose($this->f);
     }
 
-    protected function ParseHead() {
-        $this->Seek('head');
-        $this->Skip(3 * 4); // version, fontRevision, checkSumAdjustment
-        $magicNumber = $this->ReadULong();
+    protected function head() {
+        $this->seek('head');
+        $this->skip(3 * 4); // version, fontRevision, checkSumAdjustment
+        $magicNumber = $this->readULong();
 
         if ($magicNumber != 0x5F0F3CF5) {
-            $this->Error('Incorrect magic number');
+            $this->error('Incorrect magic number');
         }
 
-        $this->Skip(2); // flags
-        $this->unitsPerEm = $this->ReadUShort();
-        $this->Skip(2 * 8); // created, modified
-        $this->xMin = $this->ReadShort();
-        $this->yMin = $this->ReadShort();
-        $this->xMax = $this->ReadShort();
-        $this->yMax = $this->ReadShort();
+        $this->skip(2); // flags
+        $this->unitsPerEm = $this->readUShort();
+        $this->skip(2 * 8); // created, modified
+        $this->xMin = $this->readShort();
+        $this->yMin = $this->readShort();
+        $this->xMax = $this->readShort();
+        $this->yMax = $this->readShort();
     }
 
-    protected function ParseHhea() {
-        $this->Seek('hhea');
-        $this->Skip(4 + 15 * 2);
-        $this->numberOfHMetrics = $this->ReadUShort();
+    protected function hhea() {
+        $this->seek('hhea');
+        $this->skip(4 + 15 * 2);
+        $this->numberOfHMetrics = $this->readUShort();
     }
 
-    protected function ParseMaxp() {
-        $this->Seek('maxp');
-        $this->Skip(4);
-        $this->numGlyphs = $this->ReadUShort();
+    protected function maxp() {
+        $this->seek('maxp');
+        $this->skip(4);
+        $this->numGlyphs = $this->readUShort();
     }
 
-    protected function ParseHmtx() {
-        $this->Seek('hmtx');
+    protected function hmtx() {
+        $this->seek('hmtx');
 
         for ($i = 0; $i < $this->numberOfHMetrics; $i++) {
-            $advanceWidth = $this->ReadUShort();
-            $this->Skip(2); // lsb
+            $advanceWidth = $this->readUShort();
+            $this->skip(2); // lsb
             $this->widths[$i] = $advanceWidth;
         }
 
@@ -103,16 +103,16 @@ class TTFParser extends AbstractFpdf {
         }
     }
 
-    protected function ParseCmap() {
-        $this->Seek('cmap');
-        $this->Skip(2); // version
-        $numTables = $this->ReadUShort();
+    protected function cmap() {
+        $this->seek('cmap');
+        $this->skip(2); // version
+        $numTables = $this->readUShort();
         $offset31 = 0;
 
         for ($i = 0; $i < $numTables; $i++) {
-            $platformID = $this->ReadUShort();
-            $encodingID = $this->ReadUShort();
-            $offset = $this->ReadULong();
+            $platformID = $this->readUShort();
+            $encodingID = $this->readUShort();
+            $offset = $this->readULong();
 
             if ($platformID == 3 && $encodingID == 1) {
                 $offset31 = $offset;
@@ -120,36 +120,36 @@ class TTFParser extends AbstractFpdf {
         }
 
         if ($offset31 == 0) {
-            $this->Error('No Unicode encoding found');
+            $this->error('No Unicode encoding found');
         }
 
         $startCount = $endCount = $idDelta = $idRangeOffset = array();
 
         fseek($this->f, $this->tables['cmap'] + $offset31, SEEK_SET);
-        if (($format = $this->ReadUShort()) != 4) {
-            $this->Error('Unexpected subtable format: ' . $format);
+        if (($format = $this->readUShort()) != 4) {
+            $this->error('Unexpected subtable format: ' . $format);
         }
 
-        $this->Skip(2 * 2); // length, language
-        $segCount = $this->ReadUShort() / 2;
-        $this->Skip(3 * 2); // searchRange, entrySelector, rangeShift
+        $this->skip(2 * 2); // length, language
+        $segCount = $this->readUShort() / 2;
+        $this->skip(3 * 2); // searchRange, entrySelector, rangeShift
 
         for ($i = 0; $i < $segCount; $i++) {
-            $endCount[$i] = $this->ReadUShort();
+            $endCount[$i] = $this->readUShort();
         }
 
-        $this->Skip(2); // reservedPad
+        $this->skip(2); // reservedPad
         for ($i = 0; $i < $segCount; $i++) {
-            $startCount[$i] = $this->ReadUShort();
+            $startCount[$i] = $this->readUShort();
         }
 
         for ($i = 0; $i < $segCount; $i++) {
-            $idDelta[$i] = $this->ReadShort();
+            $idDelta[$i] = $this->readShort();
         }
 
         $offset = ftell($this->f);
         for ($i = 0; $i < $segCount; $i++) {
-            $idRangeOffset[$i] = $this->ReadUShort();
+            $idRangeOffset[$i] = $this->readUShort();
         }
 
         for ($i = 0; $i < $segCount; $i++) {
@@ -166,7 +166,7 @@ class TTFParser extends AbstractFpdf {
                 }
 
                 if ($ro > 0) {
-                    if (($gid = $this->ReadUShort()) > 0) {
+                    if (($gid = $this->readUShort()) > 0) {
                         $gid += $d;
                     }
                 } else {
@@ -184,24 +184,24 @@ class TTFParser extends AbstractFpdf {
         }
     }
 
-    protected function ParseName() {
-        $this->Seek('name');
+    protected function name() {
+        $this->seek('name');
         $tableOffset = ftell($this->f);
         $this->postScriptName = '';
-        $this->Skip(2); // format
-        $count = $this->ReadUShort();
-        $stringOffset = $this->ReadUShort();
+        $this->skip(2); // format
+        $count = $this->readUShort();
+        $stringOffset = $this->readUShort();
 
         for ($i = 0; $i < $count; $i++) {
-            $this->Skip(3 * 2); // platformID, encodingID, languageID
-            $nameID = $this->ReadUShort();
-            $length = $this->ReadUShort();
-            $offset = $this->ReadUShort();
+            $this->skip(3 * 2); // platformID, encodingID, languageID
+            $nameID = $this->readUShort();
+            $length = $this->readUShort();
+            $offset = $this->readUShort();
 
             if ($nameID == 6) {
                 // PostScript name
                 fseek($this->f, $tableOffset + $stringOffset + $offset, SEEK_SET);
-                $s = $this->Read($length);
+                $s = $this->read($length);
                 $s = str_replace(chr(0), '', $s);
                 $s = preg_replace('|[ \[\](){}<>/%]|', '', $s);
                 $this->postScriptName = $s;
@@ -210,64 +210,64 @@ class TTFParser extends AbstractFpdf {
         }
 
         if ($this->postScriptName == '') {
-            $this->Error('PostScript name not found');
+            $this->error('PostScript name not found');
         }
     }
 
-    protected function ParseOS2() {
-        $this->Seek('OS/2');
-        $version = $this->ReadUShort();
-        $this->Skip(3 * 2); // xAvgCharWidth, usWeightClass, usWidthClass
-        $fsType = $this->ReadUShort();
+    protected function os2() {
+        $this->seek('OS/2');
+        $version = $this->readUShort();
+        $this->skip(3 * 2); // xAvgCharWidth, usWeightClass, usWidthClass
+        $fsType = $this->readUShort();
         $this->Embeddable = ($fsType != 2) && ($fsType & 0x200) == 0;
-        $this->Skip(11 * 2 + 10 + 4 * 4 + 4);
-        $fsSelection = $this->ReadUShort();
+        $this->skip(11 * 2 + 10 + 4 * 4 + 4);
+        $fsSelection = $this->readUShort();
         $this->Bold = ($fsSelection & 32) != 0;
-        $this->Skip(2 * 2); // usFirstCharIndex, usLastCharIndex
-        $this->typoAscender = $this->ReadShort();
-        $this->typoDescender = $this->ReadShort();
+        $this->skip(2 * 2); // usFirstCharIndex, usLastCharIndex
+        $this->typoAscender = $this->readShort();
+        $this->typoDescender = $this->readShort();
 
         if ($version >= 2) {
-            $this->Skip(3 * 2 + 2 * 4 + 2);
-            $this->capHeight = $this->ReadShort();
+            $this->skip(3 * 2 + 2 * 4 + 2);
+            $this->capHeight = $this->readShort();
         } else {
             $this->capHeight = 0;
         }
     }
 
-    protected function ParsePost() {
-        $this->Seek('post');
-        $this->Skip(4); // version
-        $this->italicAngle = $this->ReadShort();
-        $this->Skip(2); // Skip decimal part
-        $this->underlinePosition = $this->ReadShort();
-        $this->underlineThickness = $this->ReadShort();
-        $this->isFixedPitch = ($this->ReadULong() != 0);
+    protected function post() {
+        $this->seek('post');
+        $this->skip(4); // version
+        $this->italicAngle = $this->readShort();
+        $this->skip(2); // Skip decimal part
+        $this->underlinePosition = $this->readShort();
+        $this->underlineThickness = $this->readShort();
+        $this->isFixedPitch = ($this->readULong() != 0);
     }
 
-    protected function Seek($tag) {
+    protected function seek($tag) {
         if (!isset($this->tables[$tag])) {
-            $this->Error('Table not found: ' . $tag);
+            $this->error('Table not found: ' . $tag);
         }
 
         fseek($this->f, $this->tables[$tag], SEEK_SET);
     }
 
-    protected function Skip($n) {
+    protected function skip($n) {
         fseek($this->f, $n, SEEK_CUR);
     }
 
-    protected function Read($n) {
+    protected function read($n) {
         return fread($this->f, $n);
     }
 
-    protected function ReadUShort() {
+    protected function readUShort() {
         $a = unpack('nn', fread($this->f, 2));
 
         return $a['n'];
     }
 
-    protected function ReadShort() {
+    protected function readShort() {
         $a = unpack('nn', fread($this->f, 2));
         if (($v = $a['n']) >= 0x8000) {
             $v -= 65536;
@@ -276,7 +276,7 @@ class TTFParser extends AbstractFpdf {
         return $v;
     }
 
-    protected function ReadULong() {
+    protected function readULong() {
         $a = unpack('NN', fread($this->f, 4));
 
         return $a['N'];

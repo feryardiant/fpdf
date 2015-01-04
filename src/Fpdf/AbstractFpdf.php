@@ -30,7 +30,7 @@ abstract class AbstractFpdf
     }
 
     // Fatal error
-    public function Error($message) {
+    public function error($message) {
         $heading = str_replace('\\', '::', get_class($this)) . ' error:';
         if (PHP_SAPI != 'cli') {
             $heading = "<b>{$heading}</b><br>";

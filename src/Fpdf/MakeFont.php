@@ -17,7 +17,7 @@ class MakeFont extends AbstractFpdf {
         ini_set('auto_detect_line_endings', 1);
 
         if (!file_exists($fontfile)) {
-            $this->Error('Font file not found: ' . $fontfile);
+            $this->error('Font file not found: ' . $fontfile);
         }
 
         // Font path
@@ -25,7 +25,7 @@ class MakeFont extends AbstractFpdf {
 
         $this->fontfile = $fontfile;
         $this->encoding = $encoding;
-        $this->LoadMap($this->encoding);
+        $this->loadMap($this->encoding);
     }
 
     public static function make($fontfile, $encoding = 'cp1252', $embed = true) {
@@ -40,18 +40,18 @@ class MakeFont extends AbstractFpdf {
 
         if ($ext == 'ttf' || $ext == 'otf') {
             $type = 'TrueType';
-            $this->GetInfoFromTrueType($embed);
+            $this->getTrueTypeInfo($embed);
         } elseif ($ext == 'pfb') {
             $type = 'Type1';
-            $this->GetInfoFromType1($embed);
+            $this->getType1Info($embed);
         } else {
-            $this->Error('Unrecognized font file extension: ' . $ext);
+            $this->error('Unrecognized font file extension: ' . $ext);
         }
 
         if ($embed) {
             if (function_exists('gzcompress')) {
                 $file = $basename . '.z';
-                $this->SaveToFile($file, gzcompress($this->fontInfo['Data']), 'b');
+                $this->saveToFile($file, gzcompress($this->fontInfo['Data']), 'b');
                 $this->fontInfo['File'] = $file;
                 $msg .= 'Font file compressed: ' . $file . PHP_EOL;
             } else {
@@ -60,17 +60,19 @@ class MakeFont extends AbstractFpdf {
             }
         }
 
-        if ($this->MakeDefinitionFile($basename . '.php', $type, $embed)) {
+        if ($this->makeDefinitionFile($basename . '.php', $type, $embed)) {
             $msg .= 'Font definition file generated: ' . $basename . '.php' . PHP_EOL;
             return $msg;
         }
+
+        return false;
     }
 
-    protected function LoadMap($encoding) {
+    protected function loadMap($encoding) {
         $file = dirname(__FILE__) . '/../maps/' . strtolower($encoding) . '.map';
         $a = file($file);
         if (empty($a)) {
-            $this->Error('Encoding not found: ' . $encoding);
+            $this->error('Encoding not found: ' . $encoding);
         }
 
         $map = array_fill(0, 256, array('uv' => -1, 'name' => '.notdef'));
@@ -85,13 +87,13 @@ class MakeFont extends AbstractFpdf {
         $this->fontMap = $map;
     }
 
-    protected function GetInfoFromTrueType($embed) {
+    protected function getTrueTypeInfo($embed) {
         // Return informations from a TrueType font
         $ttf = new TTFParser($this->fontfile);
 
         if ($embed) {
             if (!$ttf->Embeddable) {
-                $this->Error('Font license does not allow embedding');
+                $this->error('Font license does not allow embedding');
             }
 
             $this->fontInfo['Data'] = file_get_contents($this->fontfile);
@@ -125,7 +127,7 @@ class MakeFont extends AbstractFpdf {
                     $w = $ttf->widths[$ttf->chars[$uv]];
                     $widths[$c] = round($k * $w);
                 } else {
-                    $this->Error('Character ' . $this->fontMap[$c]['name'] . ' is missing');
+                    $this->error('Character ' . $this->fontMap[$c]['name'] . ' is missing');
                 }
             }
         }
@@ -133,17 +135,17 @@ class MakeFont extends AbstractFpdf {
         $this->fontInfo['Widths'] = $widths;
     }
 
-    protected function GetInfoFromType1($embed) {
+    protected function getType1Info($embed) {
         // Return informations from a Type1 font
         if ($embed) {
             if (!$f = fopen($this->fontfile, 'rb')) {
-                $this->Error('Can\'t open font file');
+                $this->error('Can\'t open font file');
             }
 
             // Read first segment
             $a = unpack('Cmarker/Ctype/Vsize', fread($f, 6));
             if ($a['marker'] != 128) {
-                $this->Error('Font file is not a valid binary Type1');
+                $this->error('Font file is not a valid binary Type1');
             }
 
             $size1 = $a['size'];
@@ -151,7 +153,7 @@ class MakeFont extends AbstractFpdf {
             // Read second segment
             $a = unpack('Cmarker/Ctype/Vsize', fread($f, 6));
             if ($a['marker'] != 128) {
-                $this->Error('Font file is not a valid binary Type1');
+                $this->error('Font file is not a valid binary Type1');
             }
 
             $size2 = $a['size'];
@@ -163,12 +165,12 @@ class MakeFont extends AbstractFpdf {
         }
 
         if (!file_exists($afm = substr($this->fontfile, 0, -3) . 'afm')) {
-            $this->Error('AFM font file not found: ' . $afm);
+            $this->error('AFM font file not found: ' . $afm);
         }
 
         $a = file($afm);
         if (empty($a)) {
-            $this->Error('AFM file empty or not readable');
+            $this->error('AFM file empty or not readable');
         }
 
         foreach ($a as $line) {
@@ -208,7 +210,7 @@ class MakeFont extends AbstractFpdf {
         }
 
         if (!isset($this->fontInfo['FontName'])) {
-            $this->Error('FontName missing in AFM file');
+            $this->error('FontName missing in AFM file');
         }
 
         $this->fontInfo['Bold'] = isset($this->fontInfo['Weight']) && preg_match('/bold|black/i', $this->fontInfo['Weight']);
@@ -225,7 +227,7 @@ class MakeFont extends AbstractFpdf {
                 if (isset($cw[$name])) {
                     $widths[$c] = $cw[$name];
                 } else {
-                    $this->Error('Character ' . $name . ' is missing');
+                    $this->error('Character ' . $name . ' is missing');
                 }
             }
         }
@@ -233,7 +235,7 @@ class MakeFont extends AbstractFpdf {
         $this->fontInfo['Widths'] = $widths;
     }
 
-    protected function Descriptor($info) {
+    protected function descriptor($info) {
         $fd = "array('Ascent' => " . $info['Ascender'] // Ascent
             . ", 'Descent' => " . $info['Descender'];  // Descent
 
@@ -277,7 +279,7 @@ class MakeFont extends AbstractFpdf {
         return $fd;
     }
 
-    protected function MakeWidthArray($widths) {
+    protected function makeWidthArray($widths) {
         $s = "array(\n\t\t";
         for ($c = 0; $c <= 255; $c++) {
             if (chr($c) == "'") {
@@ -305,13 +307,13 @@ class MakeFont extends AbstractFpdf {
         return $s;
     }
 
-    protected function Encoding($map) {
+    protected function encoding($map) {
         // Build differences from reference encoding
-        $ref = $this->LoadMap('cp1252');
+        $this->loadMap('cp1252');
         $s = '';
         $last = 0;
         for ($c = 32; $c <= 255; $c++) {
-            if ($map[$c]['name'] != $ref[$c]['name']) {
+            if ($map[$c]['name'] != $this->fontMap[$c]['name']) {
                 if ($c != $last + 1) {
                     $s .= $c . ' ';
                 }
@@ -323,9 +325,9 @@ class MakeFont extends AbstractFpdf {
         return rtrim($s);
     }
 
-    protected function SaveToFile($file, $s, $mode) {
+    protected function saveToFile($file, $s, $mode) {
         if (!$f = fopen($this->fontpath . $file, 'w' . $mode)) {
-            $this->Error('Can\'t write to file ' . $file);
+            $this->error('Can\'t write to file ' . $file);
         }
 
         fwrite($f, $s, strlen($s));
@@ -334,18 +336,18 @@ class MakeFont extends AbstractFpdf {
         return true;
     }
 
-    protected function MakeDefinitionFile($file, $type, $embed) {
+    protected function makeDefinitionFile($file, $type, $embed) {
         $s = '<?php'.PHP_EOL
            . 'return array('.PHP_EOL
            . "\t".'\'type\' => \''.$type.'\','.PHP_EOL
            . "\t".'\'name\' => \''.$this->fontInfo['FontName'].'\','.PHP_EOL
-           . "\t".'\'desc\' => '.$this->Descriptor($this->fontInfo).','.PHP_EOL
+           . "\t".'\'desc\' => '.$this->descriptor($this->fontInfo).','.PHP_EOL
            . "\t".'\'up\'   => '.$this->fontInfo['UnderlinePosition'].','.PHP_EOL
            . "\t".'\'ut\'   => '.$this->fontInfo['UnderlineThickness'].','.PHP_EOL
-           . "\t".'\'cw\'   => '.$this->MakeWidthArray($this->fontInfo['Widths']).','.PHP_EOL
+           . "\t".'\'cw\'   => '.$this->makeWidthArray($this->fontInfo['Widths']).','.PHP_EOL
            . "\t".'\'enc\'  => \''.$this->encoding.'\','.PHP_EOL;
 
-        if ($diff = $this->Encoding($this->fontMap)) {
+        if ($diff = $this->encoding($this->fontMap)) {
             $s .= "\t".'\'diff\' => \''.$diff.'\','.PHP_EOL;
         }
 
@@ -361,6 +363,6 @@ class MakeFont extends AbstractFpdf {
 
         $s .= ');'.PHP_EOL;
 
-        return $this->SaveToFile($file, $s, 't');
+        return $this->saveToFile($file, $s, 't');
     }
 }
