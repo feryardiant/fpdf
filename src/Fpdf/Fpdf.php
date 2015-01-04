@@ -1231,9 +1231,14 @@ class Fpdf extends AbstractFpdf {
 
     // Load a font definition file from the font directory
     protected function _loadFont($font) {
-        $font = require $this->fontpath . $font;
+        if (!file_exists($fontpath = $this->fontpath . $font)) {
+            $this->error('Could not load font definition ' . $fontpath);
+        }
+
+        $font = require $fontpath;
+
         if (!isset($font['name'])) {
-            $this->error('Could not include font definition file');
+            $this->error('Invalid font definition file');
         }
 
         return $font;
