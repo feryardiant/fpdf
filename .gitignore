@@ -1,0 +1,10 @@
+# Ignore OS Related/Generic
+_*
+*.lock
+*.old
+*~
+.idea/
+vendor/
+
+!.gitkeep
+!.travis.yml

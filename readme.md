@@ -1,8 +1,8 @@
-# FPDF
+# FPDF [![Build Status](https://travis-ci.org/feryardiant/fpdf.svg?branch=master)](https://travis-ci.org/feryardiant/fpdf)
 
-Unofficial FPDF library with clean and readable codes
+Unofficial FPDF library with PSR-0 compliant, clean and readable code
 
-This is version 1.7.0 with some changes:
+This is version 1.7.1 with some changes:
 
 * [x] The library is namespaced in `Fpdf`
 * [x] directory structure follow the PSR-0 standard with `src/` as root
@@ -11,6 +11,7 @@ This is version 1.7.0 with some changes:
 * [x] on error a RuntimeException is thrown instead on lib dramatically dying
 * [x] Refactor all method in `camelCase`.
 * [ ] Rebuild documentations and tutorials.
+* [ ] Complete testunit.
 
 ## Installing with composer
 
