@@ -9,7 +9,8 @@ This is version 1.7.0 with some changes:
 * [x] Class constructor is renamed `__construct` instead of `FPDF`
 * [x] `Fpdf_VERSION` is now `Fpdf::VERSION`
 * [x] on error a RuntimeException is thrown instead on lib dramatically dying
-* [ ] All method is changed to `camelCase` with same name.
+* [ ] Remmap All method in `camelCase`.
+* [ ] Rebuild documentations and tutorials.
 
 ## Installing with composer
 
