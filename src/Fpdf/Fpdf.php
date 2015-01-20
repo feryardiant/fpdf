@@ -2,7 +2,8 @@
 
 namespace Fpdf;
 
-class Fpdf extends AbstractFpdf {
+class Fpdf extends AbstractFpdf
+{
     const
         VERSION = '1.7.1';
 
@@ -107,20 +108,7 @@ class Fpdf extends AbstractFpdf {
 
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4') {
         // Some checks
-        // Check availability of %F
-        if (sprintf('%.1F', 1.0) != '1.0') {
-            $this->error('This version of PHP is not supported');
-        }
-
-        // Check mbstring overloading
-        if (ini_get('mbstring.func_overload') & 2) {
-            $this->error('mbstring overloading must be disabled');
-        }
-
-        // Ensure runtime magic quotes are disabled
-        if (get_magic_quotes_runtime()) {
-            @set_magic_quotes_runtime(0);
-        }
+        $this->_validateRuntime();
 
         // Font path
         $this->_validateFontpath();
@@ -147,24 +135,24 @@ class Fpdf extends AbstractFpdf {
         $orientation = strtolower($orientation);
         if (in_array($orientation, array('p', 'portrait'))) {
             $this->defOrientation = 'P';
-            $this->width = $size[0];
-            $this->height = $size[1];
+            $this->width          = $size[0];
+            $this->height         = $size[1];
         } elseif (in_array($orientation, array('l', 'landscape'))) {
             $this->defOrientation = 'L';
-            $this->width = $size[1];
-            $this->height = $size[0];
+            $this->width          = $size[1];
+            $this->height         = $size[0];
         } else {
             $this->error('Incorrect orientation: ' . $orientation);
         }
 
         $this->curOrientation = $this->defOrientation;
-        $this->widthPt = $this->width * $this->scaleFactor;
-        $this->heightPt = $this->height * $this->scaleFactor;
+        $this->widthPt        = $this->width * $this->scaleFactor;
+        $this->heightPt       = $this->height * $this->scaleFactor;
         // Page margins (1 cm)
         $margin = 28.35 / $this->scaleFactor;
         $this->setMargins($margin, $margin);
         // Interior cell margin (1 mm)
-        $this->cMargin = $margin / 10;
+        $this->cMargin   = $margin / 10;
         // Line width (0.2 mm)
         $this->lineWidth = .567 / $this->scaleFactor;
         // Automatic page break
@@ -209,13 +197,13 @@ class Fpdf extends AbstractFpdf {
 
     // Set display mode in viewer
     public function setDisplayMode($zoom, $layout = 'default') {
-        if (in_array($zoom, array('fullpage', 'fullwidth', 'real', 'default')) || !is_string($zoom)) {
+        if (in_array($zoom, $this->_validZoomMode) || !is_string($zoom)) {
             $this->zoomMode = $zoom;
         } else {
             $this->error('Incorrect zoom display mode: ' . $zoom);
         }
 
-        if (in_array($zoom, array('single', 'continuous', 'two', 'default')) || !is_string($zoom)) {
+        if (in_array($zoom, $this->_validLayoutMode) || !is_string($zoom)) {
             $this->layoutMode = $layout;
         } else {
             $this->error('Incorrect layout display mode: ' . $layout);
@@ -432,7 +420,13 @@ class Fpdf extends AbstractFpdf {
 
     // Draw a line
     public function line($x1, $y1, $x2, $y2) {
-        $this->_out(sprintf('%.2F %.2F m %.2F %.2F l S', $x1 * $this->scaleFactor, ($this->height - $y1) * $this->scaleFactor, $x2 * $this->scaleFactor, ($this->height - $y2) * $this->scaleFactor));
+        $this->_out(sprintf(
+            '%.2F %.2F m %.2F %.2F l S',
+            $x1 * $this->scaleFactor,
+            ($this->height - $y1) * $this->scaleFactor,
+            $x2 * $this->scaleFactor,
+            ($this->height - $y2) * $this->scaleFactor
+        ));
     }
 
     // Draw a rectangle
@@ -445,17 +439,24 @@ class Fpdf extends AbstractFpdf {
             $op = 'S';
         }
 
-        $this->_out(sprintf('%.2F %.2F %.2F %.2F re %s', $x * $this->scaleFactor, ($this->height - $y) * $this->scaleFactor, $w * $this->scaleFactor, -$h * $this->scaleFactor, $op));
+        $this->_out(sprintf(
+            '%.2F %.2F %.2F %.2F re %s',
+            $x * $this->scaleFactor,
+            ($this->height - $y) * $this->scaleFactor,
+            $w * $this->scaleFactor,
+            -$h * $this->scaleFactor,
+            $op
+        ));
     }
 
     // Add a TrueType, OpenType or Type1 font
     public function addFont($family, $style = '', $file = '') {
         $family = strtolower($family);
         if ($file == '') {
-            $file = str_replace(' ', '', $family) . strtolower($style) . '.php';
+            $file = str_replace(' ', '', $family) . strtolower($style) ;
         }
 
-        if (($style = strtoupper($style)) == 'IB') {
+        if ($style && ($style = strtoupper($style)) == 'IB') {
             $style = 'BI';
         }
 
@@ -664,6 +665,7 @@ class Fpdf extends AbstractFpdf {
                 $op
             );
         }
+
         if (is_string($border)) {
             $x = $this->x;
             $y = $this->y;
@@ -876,6 +878,7 @@ class Fpdf extends AbstractFpdf {
             $this->ws = 0;
             $this->_out('0 Tw');
         }
+
         if ($border && strpos($border, 'B') !== false) {
             $b .= 'B';
         }
@@ -1206,18 +1209,18 @@ class Fpdf extends AbstractFpdf {
         if ($orientation != $this->curOrientation || $size[0] != $this->curPageSize[0] || $size[1] != $this->curPageSize[1]) {
             // New size or orientation
             if ($orientation == 'P') {
-                $this->width = $size[0];
+                $this->width  = $size[0];
                 $this->height = $size[1];
             } else {
-                $this->width = $size[1];
+                $this->width  = $size[1];
                 $this->height = $size[0];
             }
 
-            $this->widthPt = $this->width * $this->scaleFactor;
-            $this->heightPt = $this->height * $this->scaleFactor;
+            $this->widthPt          = $this->width * $this->scaleFactor;
+            $this->heightPt         = $this->height * $this->scaleFactor;
             $this->pageBreakTrigger = $this->height - $this->bMargin;
-            $this->curOrientation = $orientation;
-            $this->curPageSize = $size;
+            $this->curOrientation   = $orientation;
+            $this->curPageSize      = $size;
         }
 
         if ($orientation != $this->defOrientation || $size[0] != $this->defPageSize[0] || $size[1] != $this->defPageSize[1]) {
@@ -1231,27 +1234,31 @@ class Fpdf extends AbstractFpdf {
 
     // Load a font definition file from the font directory
     protected function _loadFont($font) {
-        if (!file_exists($fontpath = $this->fontpath . $font)) {
+        $font .= '.php';
+        if (file_exists($this->fontpath . $font)) {
+            $fontpath = $this->fontpath . $font;
+        } else {
+            $fontpath = $font;
+        }
+
+        if (!file_exists($fontpath)) {
             $this->error('Could not load font definition ' . $fontpath);
         }
 
-        $font = require $fontpath;
-
-        if (!isset($font['name'])) {
+        $fontfile = require $fontpath;
+        if (!isset($fontfile['name'])) {
             $this->error('Invalid font definition file');
         }
 
-        return $font;
+        return $fontfile;
     }
 
     // Escape special characters in strings
     protected function _escape($s) {
-        $s = str_replace('\\', '\\\\', $s);
-        $s = str_replace('(', '\\(', $s);
-        $s = str_replace(')', '\\)', $s);
-        $s = str_replace("\r", '\\r', $s);
+        $_search  = array('\\',   '(',   ')',   "\r");
+        $_replace = array('\\\\', '\\(', '\\)', '\\r');
 
-        return $s;
+        return str_replace($_search, $_replace,  $s);
     }
 
     // Format a text string
@@ -1292,7 +1299,13 @@ class Fpdf extends AbstractFpdf {
         $ut = $this->curFont['ut'];
         $w  = $this->getStringWidth($txt) + $this->ws * substr_count($txt, ' ');
 
-        return sprintf('%.2F %.2F %.2F %.2F re f', $x * $this->scaleFactor, ($this->height - ($y - $up / 1000 * $this->fontSize)) * $this->scaleFactor, $w * $this->scaleFactor, -$ut / 1000 * $this->fontSizePt);
+        return sprintf(
+            '%.2F %.2F %.2F %.2F re f',
+            $x * $this->scaleFactor,
+            ($this->height - ($y - $up / 1000 * $this->fontSize)) * $this->scaleFactor,
+            $w * $this->scaleFactor,
+            -$ut / 1000 * $this->fontSizePt
+        );
     }
 
     // Extract info from a JPEG file
@@ -1313,7 +1326,7 @@ class Fpdf extends AbstractFpdf {
             $colspace = 'DeviceGray';
         }
 
-        $bpc = isset($a['bits']) ? $a['bits'] : 8;
+        $bpc  = isset($a['bits']) ? $a['bits'] : 8;
         $data = file_get_contents($file);
 
         return array(
@@ -1686,11 +1699,12 @@ class Fpdf extends AbstractFpdf {
             // Font file embedding
             $this->_newObj();
             $this->fontFiles[$file]['n'] = $this->objNum;
-            $font = file_get_contents($this->fontpath . $file, true);
 
-            if (!$font) {
+            if (!file_exists($this->fontpath . $file)) {
                 $this->error('Font file not found: ' . $file);
             }
+
+            $font = file_get_contents($this->fontpath . $file, true);
 
             if (!($compressed = (substr($file, -2) == '.z')) && isset($info['length2'])) {
                 $font = substr($font, 6, $info['length1']) . substr($font, 6 + $info['length1'] + 6, $info['length2']);
@@ -1839,8 +1853,15 @@ class Fpdf extends AbstractFpdf {
         // Soft mask
         if (isset($info['smask'])) {
             $dp = '/Predictor 15 /Colors 1 /BitsPerComponent 8 /Columns ' . $info['w'];
-            $smask = array('w' => $info['w'], 'h' => $info['h'], 'cs' => 'DeviceGray', 'bpc' => 8, 'f' => $info['f'], 'dp' => $dp, 'data' => $info['smask']);
-            $this->_putImage($smask);
+            $this->_putImage(array(
+                'w'    => $info['w'],
+                'h'    => $info['h'],
+                'cs'   => 'DeviceGray',
+                'bpc'  => 8,
+                'f'    => $info['f'],
+                'dp'   => $dp,
+                'data' => $info['smask']
+            ));
         }
 
         // Palette

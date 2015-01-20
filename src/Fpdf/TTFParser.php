@@ -2,25 +2,27 @@
 
 namespace Fpdf;
 
-class TTFParser extends AbstractFpdf {
-    public $f;
-    public $tables = array();
-    public $unitsPerEm;
-    public $xMin, $yMin, $xMax, $yMax;
-    public $numberOfHMetrics;
-    public $numGlyphs;
-    public $widths = array();
-    public $chars = array();
-    public $postScriptName;
-    public $Embeddable;
-    public $Bold;
-    public $typoAscender;
-    public $typoDescender;
-    public $capHeight;
-    public $italicAngle;
-    public $underlinePosition;
-    public $underlineThickness;
-    public $isFixedPitch;
+class TTFParser extends AbstractFpdf
+{
+    public
+        $f,
+        $tables = array(),
+        $unitsPerEm,
+        $xMin, $yMin, $xMax, $yMax,
+        $numberOfHMetrics,
+        $numGlyphs,
+        $widths = array(),
+        $chars = array(),
+        $postScriptName,
+        $Embeddable,
+        $Bold,
+        $typoAscender,
+        $typoDescender,
+        $capHeight,
+        $italicAngle,
+        $underlinePosition,
+        $underlineThickness,
+        $isFixedPitch;
 
     public function __construct($file) {
         if (!$this->f = fopen($file, 'rb')) {
@@ -61,9 +63,8 @@ class TTFParser extends AbstractFpdf {
     protected function head() {
         $this->seek('head');
         $this->skip(3 * 4); // version, fontRevision, checkSumAdjustment
-        $magicNumber = $this->readULong();
 
-        if ($magicNumber != 0x5F0F3CF5) {
+        if (($magicNumber = $this->readULong()) != 0x5F0F3CF5) {
             $this->error('Incorrect magic number');
         }
 
@@ -124,8 +125,8 @@ class TTFParser extends AbstractFpdf {
         }
 
         $startCount = $endCount = $idDelta = $idRangeOffset = array();
-
         fseek($this->f, $this->tables['cmap'] + $offset31, SEEK_SET);
+
         if (($format = $this->readUShort()) != 4) {
             $this->error('Unexpected subtable format: ' . $format);
         }
@@ -139,6 +140,7 @@ class TTFParser extends AbstractFpdf {
         }
 
         $this->skip(2); // reservedPad
+
         for ($i = 0; $i < $segCount; $i++) {
             $startCount[$i] = $this->readUShort();
         }
@@ -148,6 +150,7 @@ class TTFParser extends AbstractFpdf {
         }
 
         $offset = ftell($this->f);
+
         for ($i = 0; $i < $segCount; $i++) {
             $idRangeOffset[$i] = $this->readUShort();
         }
@@ -156,6 +159,7 @@ class TTFParser extends AbstractFpdf {
             $c1 = $startCount[$i];
             $c2 = $endCount[$i];
             $d  = $idDelta[$i];
+
             if (($ro = $idRangeOffset[$i]) > 0) {
                 fseek($this->f, $offset + 2 * $i + $ro, SEEK_SET);
             }

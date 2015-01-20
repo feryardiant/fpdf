@@ -2,12 +2,12 @@
 <?php
 
 if (PHP_SAPI != 'cli') {
-    die("This script can only be run in CLI.\n");
+    die ("This script can only be run in CLI.\n");
 }
 
 // Command-line interface
 if ($argc == 1) {
-    die("Usage: php makefont.php fontfile [enc] [embed]\n");
+    die ("Usage: php makefont.php fontfile [enc] [embed]\n");
 }
 
 $fontfile = $argv[1];

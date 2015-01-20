@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <phpunit
     bootstrap="../vendor/autoload.php"
     colors="true"
@@ -10,6 +9,10 @@
     stopOnError="false"
     stopOnFailure="false"
     verbose="valse">
+    <php>
+        <server name="SAMPLESDIR" value="./samples/" />
+        <server name="SAMPLESFONT" value="Arial" />
+    </php>
     <testsuites>
         <testsuite name="Fpdf Test Suite">
             <directory surfix="Test.php">.</directory>

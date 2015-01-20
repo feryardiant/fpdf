@@ -12,7 +12,28 @@ abstract class AbstractFpdf
 
     protected
         // path containing fonts
-        $fontpath;
+        $fontpath,
+        $_validZoomMode = array('fullpage', 'fullwidth', 'real', 'default'),
+        $_validLayoutMode = array('single', 'continuous', 'two', 'default');
+
+    protected function _validateRuntime() {
+        // Check availability of %F
+        if (sprintf('%.1F', 1.0) != '1.0') {
+            $this->error('This version of PHP is not supported');
+        }
+
+        // Check mbstring overloading
+        if (ini_get('mbstring.func_overload') & 2) {
+            $this->error('mbstring overloading must be disabled');
+        }
+
+        // Ensure runtime magic quotes are disabled
+        if (get_magic_quotes_runtime()) {
+            @set_magic_quotes_runtime(0);
+        }
+
+        ini_set('auto_detect_line_endings', 1);
+    }
 
     protected function _validateFontpath() {
         $_ds = DIRECTORY_SEPARATOR;

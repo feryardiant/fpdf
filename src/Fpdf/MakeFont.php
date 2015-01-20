@@ -2,19 +2,16 @@
 
 namespace Fpdf;
 
-class MakeFont extends AbstractFpdf {
+class MakeFont extends AbstractFpdf
+{
     protected
         $fontfile,
         $fontMap,
         $fontInfo = array();
 
     public function __construct($fontfile, $encoding = 'cp1252') {
-        // Generate a font definition file
-        if (get_magic_quotes_runtime()) {
-            @set_magic_quotes_runtime(0);
-        }
-
-        ini_set('auto_detect_line_endings', 1);
+        // Some checks
+        $this->_validateRuntime();
 
         if (!file_exists($fontfile)) {
             $this->error('Font file not found: ' . $fontfile);

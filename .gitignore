@@ -3,7 +3,10 @@ _*
 *.lock
 *.old
 *~
+
+# Project Specific
 .idea/
+*.sublime-*
 vendor/
 
 !.gitkeep
