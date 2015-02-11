@@ -2,7 +2,7 @@
 
 Unofficial FPDF library with PSR-0 compliant, clean and readable code
 
-This is version 1.7.1 with some changes:
+This is version 1.7.2 with some changes:
 
 * [x] The library is namespaced in `Fpdf`
 * [x] directory structure follow the PSR-0 standard with `src/` as root

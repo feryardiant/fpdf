@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Unofficial FPDF library with PSR-0 compliant, clean and readable code.",
     "license": "no usage restriction",
-    "homepage": "http://www.fpdf.org/",
+    "homepage": "http://www.fpdf.org",
     "authors": [
         {
             "name": "Fery Wardiyanto",
@@ -34,7 +34,7 @@
     },
     "bin": [ "bin/makefont" ],
     "archive": {
-        "exclude": [ "/docs" ]
+        "exclude": [ "/docs", "/samples", "/tests" ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true
