@@ -123,7 +123,7 @@ class Fpdf extends AbstractFpdf
         } elseif ($unit == 'in') {
             $this->scaleFactor = 72;
         } else {
-            $this->error('Incorrect unit: ' . $unit);
+            throw new Exception('Incorrect unit: ' . $unit);
         }
 
         // Page sizes
@@ -142,7 +142,7 @@ class Fpdf extends AbstractFpdf
             $this->width          = $size[1];
             $this->height         = $size[0];
         } else {
-            $this->error('Incorrect orientation: ' . $orientation);
+            throw new Exception('Incorrect orientation: ' . $orientation);
         }
 
         $this->curOrientation = $this->defOrientation;
@@ -200,13 +200,13 @@ class Fpdf extends AbstractFpdf
         if (in_array($zoom, $this->_validZoomMode) || !is_string($zoom)) {
             $this->zoomMode = $zoom;
         } else {
-            $this->error('Incorrect zoom display mode: ' . $zoom);
+            throw new Exception('Incorrect zoom display mode: ' . $zoom);
         }
 
         if (in_array($zoom, $this->_validLayoutMode) || !is_string($zoom)) {
             $this->layoutMode = $layout;
         } else {
-            $this->error('Incorrect layout display mode: ' . $layout);
+            throw new Exception('Incorrect layout display mode: ' . $layout);
         }
     }
 
@@ -530,7 +530,7 @@ class Fpdf extends AbstractFpdf
                     $this->addFont($family, $style);
                 }
             } else {
-                $this->error('Undefined font: ' . $family . ' ' . $style);
+                throw new Exception('Undefined font: ' . $family . ' ' . $style);
             }
         }
 
@@ -986,7 +986,7 @@ class Fpdf extends AbstractFpdf
             // First use of this image, get info
             if ($type == '') {
                 if (!$pos = strrpos($file, '.')) {
-                    $this->error('Image file has no extension and no type was specified: ' . $file);
+                    throw new Exception('Image file has no extension and no type was specified: ' . $file);
                 }
 
                 $type = substr($file, $pos + 1);
@@ -1000,7 +1000,7 @@ class Fpdf extends AbstractFpdf
 
             $mtd = '_parse' . $type;
             if (!method_exists($this, $mtd)) {
-                $this->error('Unsupported image type: ' . $type);
+                throw new Exception('Unsupported image type: ' . $type);
             }
 
             $info = $this->$mtd($file);
@@ -1131,7 +1131,7 @@ class Fpdf extends AbstractFpdf
             case 'F':
                 // Save to local file
                 if (!$f = fopen($name, 'wb')) {
-                    $this->error('Unable to create output file: ' . $name);
+                    throw new Exception('Unable to create output file: ' . $name);
                 }
 
                 fwrite($f, $this->buffer, strlen($this->buffer));
@@ -1141,7 +1141,7 @@ class Fpdf extends AbstractFpdf
                 // Return as a string
                 return $this->buffer;
             default:
-                $this->error('Incorrect output destination: ' . $dest);
+                throw new Exception('Incorrect output destination: ' . $dest);
         }
         return '';
     }
@@ -1158,7 +1158,7 @@ class Fpdf extends AbstractFpdf
     protected function _checkOutput() {
         if (PHP_SAPI != 'cli') {
             if (headers_sent($file, $line)) {
-                $this->error("Some data has already been output, can't send PDF file (output started at $file:$line)");
+                throw new Exception("Some data has already been output, can't send PDF file (output started at $file:$line)");
             }
         }
 
@@ -1168,7 +1168,7 @@ class Fpdf extends AbstractFpdf
                 // It contains only a UTF-8 BOM and/or whitespace, let's clean it
                 ob_clean();
             } else {
-                $this->error('Some data has already been output, can\'t send PDF file');
+                throw new Exception('Some data has already been output, can\'t send PDF file');
             }
         }
     }
@@ -1177,7 +1177,7 @@ class Fpdf extends AbstractFpdf
         if (is_string($size)) {
             $size = strtolower($size);
             if (!isset($this->stdPageSizes[$size])) {
-                $this->error('Unknown page size: ' . $size);
+                throw new Exception('Unknown page size: ' . $size);
             }
 
             $a = $this->stdPageSizes[$size];
@@ -1242,12 +1242,12 @@ class Fpdf extends AbstractFpdf
         }
 
         if (!file_exists($fontpath)) {
-            $this->error('Could not load font definition ' . $fontpath);
+            throw new Exception('Could not load font definition ' . $fontpath);
         }
 
         $fontfile = require $fontpath;
         if (!isset($fontfile['name'])) {
-            $this->error('Invalid font definition file');
+            throw new Exception('Invalid font definition file');
         }
 
         return $fontfile;
@@ -1311,11 +1311,11 @@ class Fpdf extends AbstractFpdf
     // Extract info from a JPEG file
     protected function _parseJpg($file) {
         if (!$a = getimagesize($file)) {
-            $this->error('Missing or incorrect image file: ' . $file);
+            throw new Exception('Missing or incorrect image file: ' . $file);
         }
 
         if ($a[2] != 2) {
-            $this->error('Not a JPEG file: ' . $file);
+            throw new Exception('Not a JPEG file: ' . $file);
         }
 
         if (!isset($a['channels']) || $a['channels'] == 3) {
@@ -1342,7 +1342,7 @@ class Fpdf extends AbstractFpdf
     // Extract info from a PNG file
     protected function _parsePng($file) {
         if (!($f = fopen($file, 'rb'))) {
-            $this->error('Can\'t open image file: ' . $file);
+            throw new Exception('Can\'t open image file: ' . $file);
         }
 
         $info = $this->_parsePngStream($f, $file);
@@ -1354,20 +1354,20 @@ class Fpdf extends AbstractFpdf
     // Check signature
     protected function _parsePngStream($f, $file) {
         if ($this->_readStream($f, 8) != chr(137) . 'PNG' . chr(13) . chr(10) . chr(26) . chr(10)) {
-            $this->error('Not a PNG file: ' . $file);
+            throw new Exception('Not a PNG file: ' . $file);
         }
 
         // Read header chunk
         $this->_readStream($f, 4);
         if ($this->_readStream($f, 4) != 'IHDR') {
-            $this->error('Incorrect PNG file: ' . $file);
+            throw new Exception('Incorrect PNG file: ' . $file);
         }
 
         $w = $this->_readInt($f);
         $h = $this->_readInt($f);
 
         if (($bpc = ord($this->_readStream($f, 1))) > 8) {
-            $this->error('16-bit depth not supported: ' . $file);
+            throw new Exception('16-bit depth not supported: ' . $file);
         }
 
         if (($ct = ord($this->_readStream($f, 1))) == 0 || $ct == 4) {
@@ -1377,19 +1377,19 @@ class Fpdf extends AbstractFpdf
         } elseif ($ct == 3) {
             $colspace = 'Indexed';
         } else {
-            $this->error('Unknown color type: ' . $file);
+            throw new Exception('Unknown color type: ' . $file);
         }
 
         if (ord($this->_readStream($f, 1)) != 0) {
-            $this->error('Unknown compression method: ' . $file);
+            throw new Exception('Unknown compression method: ' . $file);
         }
 
         if (ord($this->_readStream($f, 1)) != 0) {
-            $this->error('Unknown filter method: ' . $file);
+            throw new Exception('Unknown filter method: ' . $file);
         }
 
         if (ord($this->_readStream($f, 1)) != 0) {
-            $this->error('Interlacing not supported: ' . $file);
+            throw new Exception('Interlacing not supported: ' . $file);
         }
 
         $this->_readStream($f, 4);
@@ -1435,7 +1435,7 @@ class Fpdf extends AbstractFpdf
         } while ($n);
 
         if ($colspace == 'Indexed' && empty($pal)) {
-            $this->error('Missing palette in ' . $file);
+            throw new Exception('Missing palette in ' . $file);
         }
 
         $info = array(
@@ -1452,7 +1452,7 @@ class Fpdf extends AbstractFpdf
         if ($ct >= 4) {
             // Extract alpha channel
             if (!function_exists('gzuncompress')) {
-                $this->error('Zlib not available, can\'t handle alpha channel: ' . $file);
+                throw new Exception('Zlib not available, can\'t handle alpha channel: ' . $file);
             }
 
             $data = gzuncompress($data);
@@ -1501,7 +1501,7 @@ class Fpdf extends AbstractFpdf
         $res = '';
         while ($n > 0 && !feof($f)) {
             if (($s = fread($f, $n)) === false) {
-                $this->error('Error while reading stream');
+                throw new Exception('Error while reading stream');
             }
 
             $n -= strlen($s);
@@ -1509,7 +1509,7 @@ class Fpdf extends AbstractFpdf
         }
 
         if ($n > 0) {
-            $this->error('Unexpected end of stream');
+            throw new Exception('Unexpected end of stream');
         }
 
         return $res;
@@ -1525,15 +1525,15 @@ class Fpdf extends AbstractFpdf
     // Extract info from a GIF file (via PNG conversion)
     protected function _parseGif($file) {
         if (!function_exists('imagepng')) {
-            $this->error('GD extension is required for GIF support');
+            throw new Exception('GD extension is required for GIF support');
         }
 
         if (!function_exists('imagecreatefromgif')) {
-            $this->error('GD has no GIF read support');
+            throw new Exception('GD has no GIF read support');
         }
 
         if (!$im = imagecreatefromgif($file)) {
-            $this->error('Missing or incorrect image file: ' . $file);
+            throw new Exception('Missing or incorrect image file: ' . $file);
         }
 
         imageinterlace($im, 0);
@@ -1551,11 +1551,11 @@ class Fpdf extends AbstractFpdf
         } else {
             // Use temporary file
             if (!$tmp = tempnam('.', 'gif')) {
-                $this->error('Unable to create a temporary file');
+                throw new Exception('Unable to create a temporary file');
             }
 
             if (!imagepng($im, $tmp)) {
-                $this->error('Error while saving to temporary file');
+                throw new Exception('Error while saving to temporary file');
             }
 
             imagedestroy($im);
@@ -1701,7 +1701,7 @@ class Fpdf extends AbstractFpdf
             $this->fontFiles[$file]['n'] = $this->objNum;
 
             if (!file_exists($this->fontpath . $file)) {
-                $this->error('Font file not found: ' . $file);
+                throw new Exception('Font file not found: ' . $file);
             }
 
             $font = file_get_contents($this->fontpath . $file, true);
@@ -1791,7 +1791,7 @@ class Fpdf extends AbstractFpdf
                 // Allow for additional types
                 $mtd = '_put' . strtolower($type);
                 if (!method_exists($this, $mtd)) {
-                    $this->error('Unsupported font type: ' . $type);
+                    throw new Exception('Unsupported font type: ' . $type);
                 }
 
                 $this->$mtd($font);

@@ -62,24 +62,8 @@ class FpdfTest extends \PHPUnit_Framework_TestCase
 
             $this->assertSame(1, $pdf->pageNo());
             $this->assertTrue(file_exists($this->samplePdf), $this->samplePdf);
-        } catch (\RuntimeException $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('This feature still buggy.');
         }
-
-    }
-
-    function testAddInvalidFont() {
-        $message = 'Could not load font definition Foobar.php';
-        $this->setExpectedException('\RuntimeException', $message);
-
-        $pdf = new Fpdf();
-        $pdf->addFont('Foobar', '', 'Foobar');
-    }
-
-    function testLoadInvalidFont() {
-        $this->setExpectedException('\RuntimeException', 'Invalid font definition file');
-
-        $pdf = new Fpdf();
-        $pdf->addFont('foobar-font', '', $_SERVER['SAMPLESDIR'] . 'foobar-font');
     }
 }

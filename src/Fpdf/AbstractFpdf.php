@@ -19,12 +19,12 @@ abstract class AbstractFpdf
     protected function _validateRuntime() {
         // Check availability of %F
         if (sprintf('%.1F', 1.0) != '1.0') {
-            $this->error('This version of PHP is not supported');
+            throw new Exception('This version of PHP is not supported');
         }
 
         // Check mbstring overloading
         if (ini_get('mbstring.func_overload') & 2) {
-            $this->error('mbstring overloading must be disabled');
+            throw new Exception('mbstring overloading must be disabled');
         }
 
         // Ensure runtime magic quotes are disabled
@@ -53,19 +53,9 @@ abstract class AbstractFpdf
             $fontpath = str_replace('/', $_ds, $fontpath);
             $fontpath = rtrim($fontpath, $_ds) . $_ds;
         } else {
-            $this->error('Invalid font path');
+            throw new Exception('Invalid font path');
         }
 
         $this->fontpath = $fontpath;
-    }
-
-    // Fatal error
-    public function error($message) {
-        $heading = str_replace('\\', '::', get_class($this)) . ' error:';
-        if (PHP_SAPI != 'cli') {
-            $heading = "<b>{$heading}</b><br>";
-        }
-
-        throw new \RuntimeException($heading . PHP_EOL . $message);
     }
 }

@@ -26,15 +26,15 @@ class TTFParser extends AbstractFpdf
 
     public function __construct($file) {
         if (!$this->f = fopen($file, 'rb')) {
-            $this->error('Can\'t open file: ' . $file);
+            throw new Exception('Can\'t open file: ' . $file);
         }
 
         if (($version = $this->read(4)) == 'OTTO') {
-            $this->error('OpenType fonts based on PostScript outlines are not supported');
+            throw new Exception('OpenType fonts based on PostScript outlines are not supported');
         }
 
         if ($version != "\x00\x01\x00\x00") {
-            $this->error('Unrecognized file format');
+            throw new Exception('Unrecognized file format');
         }
 
         $numTables = $this->readUShort();
@@ -65,7 +65,7 @@ class TTFParser extends AbstractFpdf
         $this->skip(3 * 4); // version, fontRevision, checkSumAdjustment
 
         if (($magicNumber = $this->readULong()) != 0x5F0F3CF5) {
-            $this->error('Incorrect magic number');
+            throw new Exception('Incorrect magic number');
         }
 
         $this->skip(2); // flags
@@ -121,14 +121,14 @@ class TTFParser extends AbstractFpdf
         }
 
         if ($offset31 == 0) {
-            $this->error('No Unicode encoding found');
+            throw new Exception('No Unicode encoding found');
         }
 
         $startCount = $endCount = $idDelta = $idRangeOffset = array();
         fseek($this->f, $this->tables['cmap'] + $offset31, SEEK_SET);
 
         if (($format = $this->readUShort()) != 4) {
-            $this->error('Unexpected subtable format: ' . $format);
+            throw new Exception('Unexpected subtable format: ' . $format);
         }
 
         $this->skip(2 * 2); // length, language
@@ -214,7 +214,7 @@ class TTFParser extends AbstractFpdf
         }
 
         if ($this->postScriptName == '') {
-            $this->error('PostScript name not found');
+            throw new Exception('PostScript name not found');
         }
     }
 
@@ -251,7 +251,7 @@ class TTFParser extends AbstractFpdf
 
     protected function seek($tag) {
         if (!isset($this->tables[$tag])) {
-            $this->error('Table not found: ' . $tag);
+            throw new Exception('Table not found: ' . $tag);
         }
 
         fseek($this->f, $this->tables[$tag], SEEK_SET);
