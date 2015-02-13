@@ -4,10 +4,9 @@ namespace Fpdf;
 
 class MakeFont extends AbstractFpdf
 {
-    protected
-        $fontfile,
-        $fontMap,
-        $fontInfo = array();
+    protected $fontfile;
+    protected $fontMap;
+    protected $fontInfo = array();
 
     public function __construct($fontfile, $encoding = 'cp1252') {
         // Some checks

@@ -4,17 +4,15 @@ namespace Fpdf;
 
 abstract class AbstractFpdf
 {
-    const
-        DRAW_COLOR = '0 G',
-        FILL_COLOR = '0 g',
-        TEXT_COLOR = '0 g',
-        FONT_PATH  = '../fonts';
+    const DRAW_COLOR = '0 G';
+    const FILL_COLOR = '0 g';
+    const TEXT_COLOR = '0 g';
+    const FONT_PATH  = '../fonts';
 
-    protected
-        // path containing fonts
-        $fontpath,
-        $_validZoomMode = array('fullpage', 'fullwidth', 'real', 'default'),
-        $_validLayoutMode = array('single', 'continuous', 'two', 'default');
+    // path containing fonts
+    protected $fontpath;
+    protected $_validZoomMode = array('fullpage', 'fullwidth', 'real', 'default');
+    protected $_validLayoutMode = array('single', 'continuous', 'two', 'default');
 
     protected function _validateRuntime() {
         // Check availability of %F

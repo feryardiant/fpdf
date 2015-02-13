@@ -24,7 +24,7 @@
         "ext-zlib": "For Compression support"
     },
     "autoload": {
-        "psr-0": { "Fpdf": "src" }
+        "psr-4": { "Fpdf": "src/Fpdf" }
     },
     "require": {
         "php": ">=5.3.0"

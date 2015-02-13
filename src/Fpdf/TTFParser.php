@@ -4,25 +4,24 @@ namespace Fpdf;
 
 class TTFParser extends AbstractFpdf
 {
-    public
-        $f,
-        $tables = array(),
-        $unitsPerEm,
-        $xMin, $yMin, $xMax, $yMax,
-        $numberOfHMetrics,
-        $numGlyphs,
-        $widths = array(),
-        $chars = array(),
-        $postScriptName,
-        $Embeddable,
-        $Bold,
-        $typoAscender,
-        $typoDescender,
-        $capHeight,
-        $italicAngle,
-        $underlinePosition,
-        $underlineThickness,
-        $isFixedPitch;
+    public $f;
+    public $tables = array();
+    public $unitsPerEm;
+    public $xMin, $yMin, $xMax, $yMax;
+    public $numberOfHMetrics;
+    public $numGlyphs;
+    public $widths = array();
+    public $chars = array();
+    public $postScriptName;
+    public $Embeddable;
+    public $Bold;
+    public $typoAscender;
+    public $typoDescender;
+    public $capHeight;
+    public $italicAngle;
+    public $underlinePosition;
+    public $underlineThickness;
+    public $isFixedPitch;
 
     public function __construct($file) {
         if (!$this->f = fopen($file, 'rb')) {

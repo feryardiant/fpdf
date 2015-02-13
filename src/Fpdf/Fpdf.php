@@ -6,104 +6,104 @@ class Fpdf extends AbstractFpdf
 {
     const VERSION = '1.7.2';
 
-    protected
-        // current page number
-        $page = 0,
-        // current object number
-        $objNum = 2,
-        // array of object offsets
-        $offsets,
-        // buffer holding in-memory PDF
-        $buffer = '',
-        // array containing pages
-        $pages = array(),
-        // current document state
-        $state = 0,
-        // compression flag
-        $compress,
-        // scale factor (number of points in user unit)
-        $scaleFactor,
-        // default and current orientation
-        $defOrientation, $curOrientation,
-        // standard page sizes
-        $stdPageSizes = array(
-            'a3'     => array( 841.89, 1190.55 ),
-            'a4'     => array( 595.28, 841.89  ),
-            'a5'     => array( 420.94, 595.28  ),
-            'letter' => array( 612,    792     ),
-            'legal'  => array( 612,    1008    ),
-        ),
-        // default and current page size
-        $defPageSize, $curPageSize,
-        $pageSizes = array(), // used for pages with non default sizes or orientations
-        // dimensions of current page in points and unit
-        $widthPt, $heightPt, $width, $height,
-        // left, top, right, bottom and cell margin
-        $lMargin, $tMargin, $rMargin, $bMargin, $cMargin,
-        // current position in user unit
-        $x, $y,
-        // height of last printed cell
-        $lasth = 0,
-        // line width in user unit
-        $lineWidth,
-        // array of core font names
-        $coreFonts = array(
-            'courier',
-            'helvetica',
-            'times',
-            'symbol',
-            'zapfdingbats',
-        ),
-        // array of used fonts
-        $fonts = array(),
-        // array of font files
-        $fontFiles = array(),
-        // array of encoding differences
-        $diffs = array(),
-        // current font family
-        $fontFamily = '',
-        // current font style
-        $fontStyle = '',
-        // underlining flag
-        $underline = false,
-        // current font info
-        $curFont,
-        // current font size in points
-        $fontSizePt = 12,
-        // current font size in user unit
-        $fontSize,
-        // commands for drawing color
-        $drawColor = self::DRAW_COLOR,
-        // commands for filling color
-        $fillColor = self::FILL_COLOR,
-        // commands for text color
-        $textColor = self::TEXT_COLOR,
-        // indicates whether fill and text colors are different
-        $colorFlag = false,
-        // word spacing
-        $ws = 0,
-        // array of used images
-        $images = array(),
-        // array of links in pages
-        $pageLinks = array(),
-        // array of internal links
-        $links = array(),
-        // Page breaking
-        $autoPageBreak, $pageBreakTrigger,
-        // flag set when processing header
-        $inHeader = false,
-        // flag set when processing footer
-        $inFooter = false,
-        // zoom display mode
-        $zoomMode = 'default',
-        // layout display mode
-        $layoutMode = 'default',
-        // title
-        $title, $subject, $author, $keywords, $creator,
-        // alias for total number of pages
-        $aliasNbPages,
-        // PDF version number
-        $pdfVersion = '1.3';
+    // current page number
+    protected $page = 0;
+    // current object number
+    protected $objNum = 2;
+    // array of object offsets
+    protected $offsets;
+    // buffer holding in-memory PDF
+    protected $buffer = '';
+    // array containing pages
+    protected $pages = array();
+    // current document state
+    protected $state = 0;
+    // compression flag
+    protected $compress;
+    // scale factor (number of points in user unit)
+    protected $scaleFactor;
+    // default and current orientation
+    protected $defOrientation, $curOrientation;
+    // standard page sizes
+    protected $stdPageSizes = array(
+        'a3'     => array( 841.89, 1190.55 ),
+        'a4'     => array( 595.28, 841.89  ),
+        'a5'     => array( 420.94, 595.28  ),
+        'letter' => array( 612,    792     ),
+        'legal'  => array( 612,    1008    ),
+    );
+    // default and current page size
+    protected $defPageSize, $curPageSize;
+    // used for pages with non default sizes or orientations
+    protected $pageSizes = array();
+    // dimensions of current page in points and unit
+    protected $widthPt, $heightPt, $width, $height;
+    // left, top, right, bottom and cell margin
+    protected $lMargin, $tMargin, $rMargin, $bMargin, $cMargin;
+    // current position in user unit
+    protected $x, $y;
+    // height of last printed cell
+    protected $lasth = 0;
+    // line width in user unit
+    protected $lineWidth;
+    // array of core font names
+    protected $coreFonts = array(
+        'courier',
+        'helvetica',
+        'times',
+        'symbol',
+        'zapfdingbats',
+    );
+    // array of used fonts
+    protected $fonts = array();
+    // array of font files
+    protected $fontFiles = array();
+    // array of encoding differences
+    protected $diffs = array();
+    // current font family
+    protected $fontFamily = '';
+    // current font style
+    protected $fontStyle = '';
+    // underlining flag
+    protected $underline = false;
+    // current font info
+    protected $curFont;
+    // current font size in points
+    protected $fontSizePt = 12;
+    // current font size in user unit
+    protected $fontSize;
+    // commands for drawing color
+    protected $drawColor = self::DRAW_COLOR;
+    // commands for filling color
+    protected $fillColor = self::FILL_COLOR;
+    // commands for text color
+    protected $textColor = self::TEXT_COLOR;
+    // indicates whether fill and text colors are different
+    protected $colorFlag = false;
+    // word spacing
+    protected $ws = 0;
+    // array of used images
+    protected $images = array();
+    // array of links in pages
+    protected $pageLinks = array();
+    // array of internal links
+    protected $links = array();
+    // Page breaking
+    protected $autoPageBreak, $pageBreakTrigger;
+    // flag set when processing header
+    protected $inHeader = false;
+    // flag set when processing footer
+    protected $inFooter = false;
+    // zoom display mode
+    protected $zoomMode = 'default';
+    // layout display mode
+    protected $layoutMode = 'default';
+    // title
+    protected $title, $subject, $author, $keywords, $creator;
+    // alias for total number of pages
+    protected $aliasNbPages;
+    // PDF version number
+    protected $pdfVersion = '1.3';
 
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4') {
         // Some checks
