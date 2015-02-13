@@ -16,3 +16,6 @@ before_script:
 
 script:
     - phpunit -c tests/phpunit.xml
+
+notifications:
+    email: false
