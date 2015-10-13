@@ -1,11 +1,15 @@
 # Ignore OS Related/Generic
 _*
+.directory
 *.lock
 *.old
 *~
 
 # Project Specific
 .idea/
+.project
+.buildpath
+.settings/
 *.sublime-*
 vendor/
 

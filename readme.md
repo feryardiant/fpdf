@@ -1,4 +1,10 @@
-# FPDF [![Build Status](https://travis-ci.org/feryardiant/fpdf.svg?branch=master)](https://travis-ci.org/feryardiant/fpdf)
+# FPDF
+
+[![Travis branch](https://img.shields.io/travis/feryardiant/fpdf/master.svg)](https://travis-ci.org/feryardiant/fpdf)
+[![Gittip donate](http://img.shields.io/gratipay/feryardiant.svg?style=flat-square)](https://www.gratipay.com/feryardiant/ "Donate to this project using Gittip")
+[![PayPayl donate](https://img.shields.io/badge/paypal-donate-orange.svg?style=flat-square)](http://j.mp/1Qp9MUT "Donate to this project using Paypal")
+[![Packagist License](https://img.shields.io/packagist/l/feryardiant/fpdf.svg?style=flat-square)](https://packagist.org/packages/feryardiant/fpdf)
+[![Packagist Version](https://img.shields.io/packagist/v/feryardiant/fpdf.svg?style=flat-square)](https://packagist.org/packages/feryardiant/fpdf)
 
 Unofficial FPDF library with PSR-4 compliant, clean and readable code
 
