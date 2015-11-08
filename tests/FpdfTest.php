@@ -1,6 +1,9 @@
 <?php
 
-namespace Fpdf;
+namespace Fpdf\Tests;
+
+use Fpdf\Fpdf;
+use Fpdf\Exception;
 
 class FpdfTest extends \PHPUnit_Framework_TestCase
 {

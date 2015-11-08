@@ -1,6 +1,8 @@
 <?php
 
-namespace Fpdf;
+namespace Fpdf\Tests;
+
+use Fpdf\MakeFont;
 
 class MakeFontTest extends \PHPUnit_Framework_TestCase
 {
