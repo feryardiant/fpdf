@@ -25,4 +25,20 @@ class MakeFontTest extends \PHPUnit_Framework_TestCase
             $this->assertFalse(file_exists($basename . '.z'));
         }
     }
+
+    function testValidationShoudBeInvokedAtConstructor()
+    {
+        $basename = $_SERVER['SAMPLESDIR'] . $_SERVER['SAMPLESFONT'];
+        $fontfile = $basename . '.ttf';
+
+        $mockRuntime = $this->getMock('Fpdf\MakeFont', array('_validateRuntime'), array($fontfile));
+
+        $mockRuntime->expects($this->never())
+            ->method('_validateRuntime');
+
+        $mockRuntime = $this->getMock('Fpdf\MakeFont', array('_validateFontpath'), array($fontfile));
+
+        $mockRuntime->expects($this->never())
+            ->method('_validateFontpath');
+    }
 }

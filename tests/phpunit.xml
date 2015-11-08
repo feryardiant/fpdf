@@ -9,13 +9,21 @@
     stopOnError="false"
     stopOnFailure="false"
     verbose="valse">
+
     <php>
         <server name="SAMPLESDIR" value="./samples/" />
         <server name="SAMPLESFONT" value="Arial" />
     </php>
+
     <testsuites>
         <testsuite name="Fpdf Test Suite">
             <directory surfix="Test.php">.</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory>../src/Fpdf</directory>
+        </whitelist>
+    </filter>
 </phpunit>

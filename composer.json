@@ -20,6 +20,11 @@
             "Fpdf\\": "src/Fpdf/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Fpdf\\Tests\\": "tests/"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "bin": [ "bin/makefont" ],

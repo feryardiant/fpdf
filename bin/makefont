@@ -15,8 +15,8 @@ $enc      = $argc >= 3 ? $argv[2] : 'cp1252';
 $embed    = $argc >= 4 ? ($argv[3] == 'true' || $argv[3] == '1') : true;
 
 $files = array(
-  __DIR__ . '/../vendor/autoload.php',
-  __DIR__ . '/../../../autoload.php'
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php'
 );
 
 foreach ($files as $file) {
