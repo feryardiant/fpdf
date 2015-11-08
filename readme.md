@@ -2,7 +2,7 @@
 
 [![Packagist License](https://img.shields.io/packagist/l/feryardiant/fpdf.svg?style=flat-square)](https://packagist.org/packages/feryardiant/fpdf)
 [![Packagist Version](https://img.shields.io/packagist/v/feryardiant/fpdf.svg?style=flat-square)](https://packagist.org/packages/feryardiant/fpdf)
-[![Travis branch](https://img.shields.io/travis/feryardiant/fpdf/master.svgstyle=flat-square)](https://travis-ci.org/feryardiant/fpdf)
+[![Travis branch](https://img.shields.io/travis/feryardiant/fpdf/master.svg?style=flat-square)](https://travis-ci.org/feryardiant/fpdf)
 [![Gittip donate](http://img.shields.io/gratipay/feryardiant.svg?style=flat-square)](https://www.gratipay.com/feryardiant/ "Buy me coffee via Gittip")
 [![PayPal donate](https://img.shields.io/badge/paypal-donate-orange.svg?style=flat-square)](http://j.mp/1Qp9MUT "Buy me coffee via PayPal")
 
